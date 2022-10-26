@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32901.215
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "STPO_dynamic_test", "STPO_dynamic_test\STPO_dynamic_test.csproj", "{72FC1E69-AA14-4702-BF87-081FC73AF022}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{72FC1E69-AA14-4702-BF87-081FC73AF022}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72FC1E69-AA14-4702-BF87-081FC73AF022}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72FC1E69-AA14-4702-BF87-081FC73AF022}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72FC1E69-AA14-4702-BF87-081FC73AF022}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {01823F64-D711-4801-8414-E5E6CCD925B6}
+	EndGlobalSection
+EndGlobal
