@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 
+using PropertyChanged;
 
 
 namespace STPO_dynamic_test
@@ -10,7 +11,8 @@ namespace STPO_dynamic_test
     /// <summary>
     ///     Абстрактный класс для VM
     /// </summary>
-    public class ViewModelBase : INotifyPropertyChanged
+    [AddINotifyPropertyChangedInterface]
+    public class ViewModelBase 
     {
         private RelayCommand _closeWindow;
 
@@ -27,9 +29,7 @@ namespace STPO_dynamic_test
                 });
             }
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
+        
         /// <summary>
         ///     Команда, открывающая новое окно
         /// </summary>
@@ -48,15 +48,6 @@ namespace STPO_dynamic_test
         {
             ClosingRequest?.Invoke(this, EventArgs.Empty);
         }
-
-        /// <summary>
-        ///     Обработчик изменения свойств
-        /// </summary>
-        /// <param name="propertyName"></param>
-
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        
     }
 }

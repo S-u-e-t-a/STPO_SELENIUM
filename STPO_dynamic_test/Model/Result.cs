@@ -34,14 +34,26 @@ namespace STPO_dynamic_test
         }
         public static bool operator ==(Result lResult, Result rResult)
         {
+            if (lResult is null && rResult is null)
+            {
+                return true;
+            }
+
+            if (lResult is null || rResult is null)
+            {
+                return false;
+            }
             if (!lResult.IsNumber && !rResult.IsNumber)
             {
                 return lResult.Value==rResult.Value;
             }
-            else
+
+            if (lResult.IsNumber&&rResult.IsNumber)
             {
-                throw new Exception("Значения не являются строками!");
+                return lResult.doubleValue == rResult.doubleValue;
             }
+            return false;
+            
         }
         public static bool operator !=(Result lResult, Result rResult)
         {

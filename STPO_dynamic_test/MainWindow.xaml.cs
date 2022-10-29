@@ -1,32 +1,36 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
-
-using HandyControl.Controls;
-using HandyControl.Themes;
-using HandyControl.Tools;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
+
 
 namespace STPO_dynamic_test
 {
     public partial class MainWindow
     {
+        private ObservableCollection<IntegrationMethod> Methods;
+
         public MainWindow()
         {
             InitializeComponent();
-            var initialTestData = new InitialTestData()
-            {
-                Min = "-6",
-                Max = "7",
-                Step = "0,0001",
-                IntegrateMethod = "3",
-                Coefs = new List<string>(){"7","2","3","1","8",},
-            };
 
-            var test = new Test(initialTestData, "TEST 1", 0.001);
-            Debug.WriteLine(test);
             DataContext = new VM();
+            Methods = new ObservableCollection<IntegrationMethod>(){((VM) DataContext).Methods[0]};
+            ((VM) DataContext).SelectedMethods = Methods;
+            MetodBox.SelectedItems.Add(((VM) DataContext).Methods[0]);
+        }
+
+        private void CheckComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            foreach (var item in e.AddedItems)
+            {
+                Methods.Add((IntegrationMethod)item);
+            }
+
+            foreach (var item in e.RemovedItems)
+            {
+                Methods.Remove((IntegrationMethod)item);
+            }
         }
     }
 }

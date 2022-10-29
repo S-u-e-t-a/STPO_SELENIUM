@@ -13,7 +13,14 @@ namespace STPO_dynamic_test
         public string Step { get; init; }
         public List<string> Coefs { get; init; }
 
-        
+        public string CoefsString
+        {
+            get
+            {
+                return String.Join(' ', Coefs);
+            }
+        }
+
         public string IntegrateMethod { get; init; }
         public override string ToString()
         {
