@@ -39,9 +39,6 @@
                                             hc:InfoElement.TitleWidth="200"
                                             Text="{Binding CountOfCases,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged }"
                                             HorizontalAlignment="Stretch" />
-                                <CheckBox Content="Позитивные" IsChecked="{Binding IsPositive}"
-                                          Margin="10 5"
-                                          HorizontalAlignment="Stretch" />
                                 <hc:TextBox hc:InfoElement.Title="Допустимая погрешность"
                                             hc:InfoElement.TitlePlacement="Left" Margin="10 5"
                                             hc:InfoElement.TitleWidth="200"
