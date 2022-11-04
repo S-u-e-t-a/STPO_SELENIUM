@@ -55,14 +55,14 @@ public static class PdfExporter
 
         document.Add(new Paragraph("Тесты"));
         var testTable = new Table(UnitValue.CreatePercentArray(8)).UseAllAvailableWidth();
-        testTable.AddCell(new Cell(1, 1).Add(new Paragraph("Нач. значение").SetTextAlignment(TextAlignment.CENTER)));
-        testTable.AddCell(new Cell(1, 1).Add(new Paragraph("Правая граница").SetTextAlignment(TextAlignment.CENTER)));
-        testTable.AddCell(new Cell(1, 1).Add(new Paragraph("Шаг").SetTextAlignment(TextAlignment.CENTER)));
-        testTable.AddCell(new Cell(1, 1).Add(new Paragraph("Метод").SetTextAlignment(TextAlignment.CENTER)));
-        testTable.AddCell(new Cell(1, 1).Add(new Paragraph("Коэффициенты").SetTextAlignment(TextAlignment.CENTER)));
-        testTable.AddCell(new Cell(1, 1).Add(new Paragraph("Ожидаемое значение").SetTextAlignment(TextAlignment.CENTER)));
-        testTable.AddCell(new Cell(1, 1).Add(new Paragraph("Фактическое значение").SetTextAlignment(TextAlignment.CENTER)));
-        testTable.AddCell(new Cell(1, 1).Add(new Paragraph("Пройден").SetTextAlignment(TextAlignment.CENTER)));
+        testTable.AddHeaderCell(new Cell(1, 1).Add(new Paragraph("Нач. значение").SetTextAlignment(TextAlignment.CENTER)));
+        testTable.AddHeaderCell(new Cell(1, 1).Add(new Paragraph("Правая граница").SetTextAlignment(TextAlignment.CENTER)));
+        testTable.AddHeaderCell(new Cell(1, 1).Add(new Paragraph("Шаг").SetTextAlignment(TextAlignment.CENTER)));
+        testTable.AddHeaderCell(new Cell(1, 1).Add(new Paragraph("Метод").SetTextAlignment(TextAlignment.CENTER)));
+        testTable.AddHeaderCell(new Cell(1, 1).Add(new Paragraph("Коэффициенты").SetTextAlignment(TextAlignment.CENTER)));
+        testTable.AddHeaderCell(new Cell(1, 1).Add(new Paragraph("Ожидаемое значение").SetTextAlignment(TextAlignment.CENTER)));
+        testTable.AddHeaderCell(new Cell(1, 1).Add(new Paragraph("Фактическое значение").SetTextAlignment(TextAlignment.CENTER)));
+        testTable.AddHeaderCell(new Cell(1, 1).Add(new Paragraph("Пройден").SetTextAlignment(TextAlignment.CENTER)));
 
         foreach (var test in tests)
         {
