@@ -1,32 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace STPO_dynamic_test
+
+namespace STPO_dynamic_test.Model;
+
+public class InitialTestData
 {
-    public class InitialTestData
+    public string Min { get; init; }
+    public string Max { get; init; }
+    public string Step { get; init; }
+    public List<string> Coefs { get; init; }
+
+    public string CoefsString => string.Join(' ', Coefs);
+
+    public string IntegrateMethod { get; init; }
+
+    public override string ToString()
     {
-        public string Min { get; init; }
-        public string Max { get; init; }
-        public string Step { get; init; }
-        public List<string> Coefs { get; init; }
+        var strCoefs = string.Join(" ", Coefs);
 
-        public string CoefsString
-        {
-            get
-            {
-                return String.Join(' ', Coefs);
-            }
-        }
-
-        public string IntegrateMethod { get; init; }
-        public override string ToString()
-        {
-            var strCoefs = String.Join(" ", Coefs);
-
-            return $"{Min} {Max} {Step} {IntegrateMethod} {strCoefs}";
-        }
+        return $"{Min} {Max} {Step} {IntegrateMethod} {strCoefs}";
     }
 }

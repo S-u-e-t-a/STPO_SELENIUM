@@ -1,53 +1,49 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows;
 
 using PropertyChanged;
 
 
-namespace STPO_dynamic_test
+namespace STPO_dynamic_test.Misc;
+
+/// <summary>
+///     Абстрактный класс для VM
+/// </summary>
+[AddINotifyPropertyChangedInterface]
+public class ViewModelBase
 {
+    private RelayCommand _closeWindow;
+
     /// <summary>
-    ///     Абстрактный класс для VM
+    ///     Команда, закрывающая текущее окно
     /// </summary>
-    [AddINotifyPropertyChangedInterface]
-    public class ViewModelBase 
+    public RelayCommand CloseWindow
     {
-        private RelayCommand _closeWindow;
-
-        /// <summary>
-        ///     Команда, закрывающая текущее окно
-        /// </summary>
-        public RelayCommand CloseWindow
+        get
         {
-            get
+            return _closeWindow ??= new RelayCommand(o =>
             {
-                return _closeWindow ??= new RelayCommand(o =>
-                {
-                    OnClosingRequest();
-                });
-            }
+                OnClosingRequest();
+            });
         }
-        
-        /// <summary>
-        ///     Команда, открывающая новое окно
-        /// </summary>
-        /// <param name="window"></param>
-        public static void ShowChildWindow(Window window)
-        {
-            window.Show();
-        }
+    }
 
-        public event EventHandler ClosingRequest;
+    /// <summary>
+    ///     Команда, открывающая новое окно
+    /// </summary>
+    /// <param name="window"></param>
+    public static void ShowChildWindow(Window window)
+    {
+        window.Show();
+    }
 
-        /// <summary>
-        ///     Функция, закрывающая текущее окно
-        /// </summary>
-        protected void OnClosingRequest()
-        {
-            ClosingRequest?.Invoke(this, EventArgs.Empty);
-        }
-        
+    public event EventHandler ClosingRequest;
+
+    /// <summary>
+    ///     Функция, закрывающая текущее окно
+    /// </summary>
+    protected void OnClosingRequest()
+    {
+        ClosingRequest?.Invoke(this, EventArgs.Empty);
     }
 }

@@ -4,292 +4,234 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 using Microsoft.Win32;
 
-using PropertyChanged;
+using STPO_dynamic_test.Misc;
+using STPO_dynamic_test.Model;
+using STPO_dynamic_test.ParametersVM;
 
 
-namespace STPO_dynamic_test
+namespace STPO_dynamic_test;
+
+internal class VM : ViewModelBase
+
 {
-    [AddINotifyPropertyChangedInterface]
-    internal class IntegrationMethod
-    {
-        public string Name { get; set; }
-        public string Id { get; set; }
+#region Functions
 
-        public override string ToString()
+#region Constructors
+
+    public VM()
+    {
+        Methods = new List<IntegrationMethod>
         {
-            return Name;
+            new() {Id = "1", Name = "Метод парабол",},
+            new() {Id = "2", Name = "Метод Трапеций",},
+            new() {Id = "3", Name = "Метод Монте-Карло",},
+        };
+    }
+
+#endregion
+
+
+    private IntegrationMethod getMethod()
+    {
+        var rnd = new Random();
+
+        return Parameters.SelectedMethods[rnd.Next(0, Parameters.SelectedMethods.Count)];
+    }
+
+
+    private Test buildTest(string name)
+    {
+        var coefs = Parameters.Coefs.GetValue().Split(" ");
+
+        var init = new InitialTestData
+        {
+            Coefs = coefs.ToList(),
+            IntegrateMethod = getMethod().Id,
+            Max = Parameters.Right.GetValue(),
+            Min = Parameters.Left.GetValue(),
+            Step = Parameters.Step.GetValue(),
+        };
+
+        var test = new Test(init, name);
+
+        return test;
+    }
+
+#endregion
+
+
+#region Properties
+
+    public string CountOfCases { get; set; } = "10";
+    public string Eps { get; set; } = "0,1";
+
+
+    public TestParametersVM Parameters { get; set; } = new TestParametersVM()
+    {
+        Left = new()
+        {
+            IsVariable = false,
+            Min = -10,
+            Max = 0,
+            Value = "0",
+        },
+        Right = new()
+        {
+            IsVariable = false,
+            Min = 0,
+            Max = 10,
+            Value = "10",
+        },
+        Step = new()
+        {
+            IsVariable = false,
+            Min = 0,
+            Max = 1,
+            Value = "0,1",
+        },
+        Coefs = new()
+        {
+            IsVariable = false,
+            Min = 3,
+            Max = 10,
+            Value = "1 2 3",
+            Count = 3,
+        }
+    };
+
+    public ObservableCollection<TestInDataGrid> GeneratedTests { get; set; }
+    public List<IntegrationMethod> Methods { get; set; }
+
+#endregion
+
+
+#region Commands
+
+    private RelayCommand _exportPdfCommand;
+
+    public RelayCommand ExportPdfCommand
+    {
+        get
+        {
+            return _exportPdfCommand ??= new RelayCommand(o =>
+            {
+                var saveFileDialog = new SaveFileDialog();
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    PdfExporter.Export(saveFileDialog.FileName, GeneratedTests, Parameters);
+                }
+            });
         }
     }
 
 
-    [AddINotifyPropertyChangedInterface]
-    internal class TestInDataGrid
+    private RelayCommand _startCommand;
+
+    public RelayCommand StartCommand
     {
-        public TestInDataGrid(Test test) => Test = test;
-        public bool IsNeedToRun { get; set; } = true;
-        public bool? IsPassed { get; set; }
-        public Test Test { get; set; }
-    }
-
-
-    internal class VM : ViewModelBase
-
-    {
-    #region Functions
-
-    #region Constructors
-
-        public VM()
+        get
         {
-            Methods = new List<IntegrationMethod>
+            return _startCommand ??= new RelayCommand(o =>
             {
-                new() {Id = "1", Name = "Метод парабол",},
-                new() {Id = "2", Name = "Метод Трапеций",},
-                new() {Id = "3", Name = "Метод Монте-Карло",},
-            };
-        }
-
-    #endregion
-
-
-        private double GetRandomDouble(double min, double max)
-        {
-            var rnd = new Random();
-
-            return rnd.NextDouble() * (max - min) + min;
-        }
-
-        private string getLeft()
-        {
-            if (!IsLeftVariable)
-            {
-                return Left;
-            }
-            return GetRandomDouble(MinLeft, MaxLeft).ToString().Replace('.',',');
-        }
-        private string getRight()
-        {
-            if (!IsRightVariable)
-            {
-                return Right;
-            }
-            return GetRandomDouble(MinRight, MaxRight).ToString().Replace('.',',');
-        }
-        private string getCoefs()
-        {
-            if (!IsCoefsVariable)
-            {
-                return Coefs;
-            }
-
-            var coefs = "";
-
-            for (int i = 0; i < CoefsCount; i++)
-            {
-                coefs += GetRandomDouble(MinCoef, MaxCoef).ToString().Replace('.',',');
-                coefs += " ";
-            }
-
-            coefs = coefs.Substring(0, coefs.Length-1);
-            return coefs;
-        }
-
-        private IntegrationMethod getMethod()
-        {
-            var rnd = new Random();
-            return SelectedMethods[rnd.Next(0,SelectedMethods.Count)];
-        }
-
-        private string getStep()
-        {
-            if (!IsStepVariable)
-            {
-                return Step;
-            }
-
-            return GetRandomDouble(MinStep, MaxStep).ToString().Replace('.',',');
-        }
-        
-        private Test buildTest(string name)
-        {
-            var coefs = getCoefs().Split(" ");
-            var init = new InitialTestData()
-            {
-                Coefs = coefs.ToList(),
-                IntegrateMethod = getMethod().Id,
-                Max = getRight(),
-                Min = getLeft(),
-                Step = getStep(),
-            };
-
-            var test = new Test(init, name);
-
-            return test;
-        }
-    #endregion
-
-
-    #region Properties
-
-        public string CountOfCases { get; set; } = "10";
-        public string Eps { get; set; } = "0,1";
-
-
-    #region left
-
-        public string Left { get; set; } = "0";
-        public bool IsLeftVariable { get; set; }
-        public double MinLeft { get; set; } = -10;
-        public double MaxLeft { get; set; } = 0;
-
-    #endregion
-    #region right
-
-
-        public string Right { get; set; } = "10";
-        public bool IsRightVariable { get; set; }
-        public double MinRight { get; set; } = 0;
-        public double MaxRight { get; set; } = 10;
-
-    #endregion
-    #region coefs
-
-        public string Coefs { get; set; } = "1 2 3";
-        public int CoefsCount { get; set; } = 3;
-        public double MinCoef { get; set; } = 1;
-        public double MaxCoef { get; set; } = 10;
-        public bool IsCoefsVariable { get; set; }
-
-    #endregion
-    #region step
-
-        public string Step { get; set; } = "0,1";
-        public bool IsStepVariable { get; set; }
-        public double MinStep { get; set; } = 0;
-        public double MaxStep { get; set; } = 1;
-
-    #endregion
-
-
-        public ObservableCollection<TestInDataGrid> GeneratedTests { get; set; }
-        public List<IntegrationMethod> Methods { get; set; }
-        public ObservableCollection<IntegrationMethod> SelectedMethods { get; set; }
-
-    #endregion
-
-
-    #region Commands
-
-        private RelayCommand _startCommand;
-
-        public RelayCommand StartCommand
-        {
-            get
-            {
-                return _startCommand ??= new RelayCommand(o =>
+                foreach (var test in GeneratedTests)
                 {
-                    foreach (var test in GeneratedTests)
+                    if (test.IsNeedToRun)
                     {
-                        if (test.IsNeedToRun)
-                        {
-                            test.Test.Run();
-                            test.IsPassed = test.Test.IsTestPassed(Eps.ToDouble());
-                        }
+                        test.Test.Run();
+                        test.IsPassed = test.Test.IsTestPassed(Eps.ToDouble());
                     }
-                }, _ =>
+                }
+            }, _ =>
+            {
+                if (GeneratedTests is null)
                 {
-                    if (GeneratedTests is null)
-                    {
-                        return false;
-                    }
-
-                    return GeneratedTests.Count > 0;
+                    return false;
                 }
 
-                );
-            }
+                return GeneratedTests.Count > 0;
+            });
         }
-
-        private RelayCommand _makeTestsCommand;
-
-        public RelayCommand MakeTestsCommand
-        {
-            get
-            {
-                return _makeTestsCommand ??= new RelayCommand(o =>
-                {
-                    var testsCount = CountOfCases.ToDouble();
-                    GeneratedTests = new ObservableCollection<TestInDataGrid>();
-
-                    for (int i = 0; i < testsCount; i++)
-                    {
-                        GeneratedTests.Add(new TestInDataGrid(buildTest($"Test {i}")));
-                    }
-                });
-            }
-        }
-
-        private RelayCommand _exportCommand;
-
-        public RelayCommand ExportCommand
-        {
-            get
-            {
-                return _exportCommand ??= new RelayCommand(o =>
-                {
-                    SaveFileDialog saveFileDialog = new SaveFileDialog();
-
-                    if (saveFileDialog.ShowDialog() == true)
-                    {
-                        using (StreamWriter sw = new StreamWriter(saveFileDialog.FileName))
-                        {
-                            sw.WriteLine(JsonSerializer.Serialize(GeneratedTests.Select(t=>t.Test).ToList()));
-                        }
-                    }
-                }, _ =>
-                {
-                    if (GeneratedTests is null)
-                    {
-                        return false;
-                    }
-
-                    return GeneratedTests.Count > 0;
-                });
-            }
-        }
-
-        private RelayCommand _importCommand;
-
-        public RelayCommand ImportCommand
-        {
-            get
-            {
-                return _importCommand ??= new RelayCommand(o =>
-                {
-                    OpenFileDialog saveFileDialog = new OpenFileDialog();
-
-                    if (saveFileDialog.ShowDialog() == true)
-                    {
-                        using (StreamReader sr = new StreamReader(saveFileDialog.FileName))
-                        {
-                            var text = sr.ReadToEnd();
-                            var tests = JsonSerializer.Deserialize<List<Test>>(text);
-                            GeneratedTests = new ObservableCollection<TestInDataGrid>();
-
-                            foreach (var test in tests)
-                            {
-                                GeneratedTests.Add(new TestInDataGrid(test));
-                            }
-                        }
-                    }
-                });
-            }
-        }
-
-    #endregion
     }
+
+    private RelayCommand _makeTestsCommand;
+
+    public RelayCommand MakeTestsCommand
+    {
+        get
+        {
+            return _makeTestsCommand ??= new RelayCommand(o =>
+            {
+                var testsCount = CountOfCases.ToDouble();
+                GeneratedTests = new ObservableCollection<TestInDataGrid>();
+
+                for (var i = 0; i < testsCount; i++)
+                {
+                    GeneratedTests.Add(new TestInDataGrid(buildTest($"Test {i}")));
+                }
+            });
+        }
+    }
+
+    private RelayCommand _exportCommand;
+
+    public RelayCommand ExportCommand
+    {
+        get
+        {
+            return _exportCommand ??= new RelayCommand(o =>
+            {
+                var saveFileDialog = new SaveFileDialog();
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    using (var sw = new StreamWriter(saveFileDialog.FileName))
+                    {
+                        sw.WriteLine(JsonSerializer.Serialize(GeneratedTests.Select(t => t.Test).ToList()));
+                    }
+                }
+            }, _ =>
+            {
+                if (GeneratedTests is null)
+                {
+                    return false;
+                }
+
+                return GeneratedTests.Count > 0;
+            });
+        }
+    }
+
+    private RelayCommand _importCommand;
+
+    public RelayCommand ImportCommand
+    {
+        get
+        {
+            return _importCommand ??= new RelayCommand(o =>
+            {
+                var saveFileDialog = new OpenFileDialog();
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    using (var sr = new StreamReader(saveFileDialog.FileName))
+                    {
+                        var text = sr.ReadToEnd();
+                        var tests = JsonSerializer.Deserialize<List<Test>>(text);
+                        GeneratedTests = new ObservableCollection<TestInDataGrid>();
+
+                        foreach (var test in tests)
+                        {
+                            GeneratedTests.Add(new TestInDataGrid(test));
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+#endregion
 }

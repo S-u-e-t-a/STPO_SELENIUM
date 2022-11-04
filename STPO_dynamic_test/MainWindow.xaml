@@ -6,6 +6,7 @@
            xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
            xmlns:hc="https://handyorg.github.io/handycontrol"
            xmlns:stpoDynamicTest="clr-namespace:STPO_dynamic_test"
+           xmlns:misc="clr-namespace:STPO_dynamic_test.Misc"
            mc:Ignorable="d"
            Title="Динамическое тестирование"
            WindowStartupLocation="CenterScreen"
@@ -13,21 +14,10 @@
            Height="450"
            Width="800"
            d:DataContext="{d:DesignInstance stpoDynamicTest:VM}">
-    <hc:Window.Resources>  
-        <stpoDynamicTest:BackgroundConverter x:Key="BackgroundConverter"/>  
-        <stpoDynamicTest:ForegroundConverter x:Key="ForegroundConverter"/>  
-        <Style x:Key="DataGridStyle" TargetType="DataGrid">
-            <Setter Property="CellStyle">
-                <Setter.Value>
-                    <Style TargetType="DataGridCell">
-                        <Setter Property="BorderThickness" Value="0"/>
-                        <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}" />
-                        <Setter Property="Background" Value="{Binding Background, RelativeSource={RelativeSource TemplatedParent}}" />
-                    </Style>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </hc:Window.Resources>  
+    <hc:Window.Resources>
+        <misc:BackgroundConverter x:Key="BackgroundConverter" />
+        <misc:ForegroundConverter x:Key="ForegroundConverter" />
+    </hc:Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -65,11 +55,11 @@
                         <Border.Effect>
                             <DropShadowEffect ShadowDepth="0" Opacity="0.3" />
                         </Border.Effect>
-                        <GroupBox Header="Исходные данные" Style="{StaticResource GroupBoxOriginal}" >
+                        <GroupBox Header="Исходные данные" Style="{StaticResource GroupBoxOriginal}">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="100" />
-                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition />
@@ -84,19 +74,20 @@
                                 <Label Grid.Column="1" Content="Переменная" />
 
 
-                                <CheckBox Grid.Row="1" IsChecked="{Binding IsLeftVariable}" HorizontalAlignment="Center" />
-                                <hc:TextBox Grid.Column="1" Grid.Row="1" Visibility="{c:Binding Path=!IsLeftVariable}"
+                                <CheckBox Grid.Row="1" IsChecked="{Binding Parameters.Left.IsVariable}"
+                                          HorizontalAlignment="Center" />
+                                <hc:TextBox Grid.Column="1" Grid.Row="1" Visibility="{c:Binding Path=!Parameters.Left.IsVariable}"
                                             hc:InfoElement.Title="Левая граница диапазона"
                                             hc:InfoElement.TitlePlacement="Left" Margin="10 5"
                                             hc:InfoElement.TitleWidth="200"
-                                            Text="{Binding Left, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                            Text="{Binding Parameters.Left.Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                             HorizontalAlignment="Stretch" />
-                                <Border Grid.Row="1" Grid.Column="1" Visibility="{c:Binding Path=IsLeftVariable}"
+                                <Border Grid.Row="1" Grid.Column="1" Visibility="{c:Binding Path=Parameters.Left.IsVariable}"
                                         CornerRadius="7" Background="White" Margin="5,10,10,0">
                                     <Border.Effect>
                                         <DropShadowEffect ShadowDepth="0" Opacity="0.3" />
                                     </Border.Effect>
-                                    <GroupBox Header="Левая граница диапазона" 
+                                    <GroupBox Header="Левая граница диапазона"
                                               Style="{StaticResource GroupBoxOriginal}">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -107,27 +98,29 @@
                                                         hc:InfoElement.Title="От"
                                                         hc:InfoElement.TitlePlacement="Left" Margin="10 5"
                                                         hc:InfoElement.TitleWidth="60"
-                                                        Text="{Binding  MinLeft, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                        Text="{Binding  Parameters.Left.Min, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                         HorizontalAlignment="Stretch" />
                                             <hc:TextBox Grid.Column="1"
                                                         hc:InfoElement.Title="До"
                                                         hc:InfoElement.TitlePlacement="Left" Margin="10 5"
                                                         hc:InfoElement.TitleWidth="60"
-                                                        Text="{Binding  MaxLeft, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                        Text="{Binding  Parameters.Left.Max, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                         HorizontalAlignment="Stretch" />
                                         </Grid>
                                     </GroupBox>
                                 </Border>
-                                
-                                
-                                <CheckBox Grid.Row="2" Grid.Column="0" IsChecked="{Binding IsRightVariable}" HorizontalAlignment="Center" />
-                                <hc:TextBox Grid.Column="1" Grid.Row="2" Visibility="{c:Binding Path=!IsRightVariable}"
+
+
+                                <CheckBox Grid.Row="2" Grid.Column="0" IsChecked="{Binding  Parameters.Right.IsVariable}"
+                                          HorizontalAlignment="Center" />
+                                <hc:TextBox Grid.Column="1" Grid.Row="2"
+                                            Visibility="{c:Binding Path=!Parameters.Right.IsVariable}"
                                             hc:InfoElement.Title="Правая граница диапазона"
                                             hc:InfoElement.TitlePlacement="Left" Margin="10 5"
                                             hc:InfoElement.TitleWidth="200"
-                                            Text="{Binding Right,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged }"
+                                            Text="{Binding Parameters.Right.Value,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged }"
                                             HorizontalAlignment="Stretch" />
-                                <Border Grid.Row="2" Grid.Column="1" Visibility="{c:Binding Path=IsRightVariable}"
+                                <Border Grid.Row="2" Grid.Column="1" Visibility="{c:Binding Path=Parameters.Right.IsVariable}"
                                         CornerRadius="7" Background="White" Margin="5,10,10,0">
                                     <Border.Effect>
                                         <DropShadowEffect ShadowDepth="0" Opacity="0.3" />
@@ -143,27 +136,28 @@
                                                         hc:InfoElement.Title="От"
                                                         hc:InfoElement.TitlePlacement="Left" Margin="10 5"
                                                         hc:InfoElement.TitleWidth="60"
-                                                        Text="{Binding  MinRight, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                        Text="{Binding  Parameters.Right.Min, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                         HorizontalAlignment="Stretch" />
                                             <hc:TextBox Grid.Column="1"
                                                         hc:InfoElement.Title="До"
                                                         hc:InfoElement.TitlePlacement="Left" Margin="10 5"
                                                         hc:InfoElement.TitleWidth="60"
-                                                        Text="{Binding  MaxRight, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                        Text="{Binding   Parameters.Right.Max, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                         HorizontalAlignment="Stretch" />
                                         </Grid>
                                     </GroupBox>
                                 </Border>
 
-                                
-                                <CheckBox Grid.Row="3" IsChecked="{Binding IsStepVariable}" HorizontalAlignment="Center" />
-                                <hc:TextBox Grid.Column="1" Grid.Row="3" Visibility="{c:Binding Path=!IsStepVariable}"
+
+                                <CheckBox Grid.Row="3" IsChecked="{Binding Parameters.Step.IsVariable}"
+                                          HorizontalAlignment="Center" />
+                                <hc:TextBox Grid.Column="1" Grid.Row="3" Visibility="{c:Binding Path=!Parameters.Step.IsVariable}"
                                             hc:InfoElement.Title="Шаг интегрирования"
                                             hc:InfoElement.TitlePlacement="Left" Margin="10 5"
                                             hc:InfoElement.TitleWidth="200"
-                                            Text="{Binding Step, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                            Text="{Binding Parameters.Step.Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                             HorizontalAlignment="Stretch" />
-                                <Border Grid.Row="3" Grid.Column="1" Visibility="{c:Binding Path=IsStepVariable}"
+                                <Border Grid.Row="3" Grid.Column="1" Visibility="{c:Binding Path=Parameters.Step.IsVariable}"
                                         CornerRadius="7" Background="White" Margin="5,10,10,0">
                                     <Border.Effect>
                                         <DropShadowEffect ShadowDepth="0" Opacity="0.3" />
@@ -179,33 +173,33 @@
                                                         hc:InfoElement.Title="От"
                                                         hc:InfoElement.TitlePlacement="Left" Margin="10 5"
                                                         hc:InfoElement.TitleWidth="60"
-                                                        Text="{Binding  MinStep, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                        Text="{Binding  Parameters.Step.Min, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                         HorizontalAlignment="Stretch" />
                                             <hc:TextBox Grid.Column="1"
                                                         hc:InfoElement.Title="До"
                                                         hc:InfoElement.TitlePlacement="Left" Margin="10 5"
                                                         hc:InfoElement.TitleWidth="60"
-                                                        Text="{Binding  MaxStep, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                        Text="{Binding  Parameters.Step.Max, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                         HorizontalAlignment="Stretch" />
                                         </Grid>
                                     </GroupBox>
                                 </Border>
-                                
-                                
-                                
-                                <CheckBox Grid.Row="4" IsChecked="{Binding IsCoefsVariable}" HorizontalAlignment="Center" />
+
+
+                                <CheckBox Grid.Row="4" IsChecked="{Binding Parameters.Coefs.IsVariable}"
+                                          HorizontalAlignment="Center" />
                                 <hc:TextBox Grid.Column="1" Grid.Row="4"
-                                            Visibility="{c:Binding Path= !IsCoefsVariable}"
+                                            Visibility="{c:Binding Path= !Parameters.Coefs.IsVariable}"
                                             hc:InfoElement.Title="Коэффициенты полинома"
                                             hc:InfoElement.TitlePlacement="Left" Margin="10 5"
                                             hc:InfoElement.TitleWidth="200"
                                             HorizontalAlignment="Stretch">
                                     <hc:TextBox.Text>
-                                        <Binding Path="Coefs" Mode="TwoWay"
+                                        <Binding Path="Parameters.Coefs.Value" Mode="TwoWay"
                                                  UpdateSourceTrigger="PropertyChanged" />
                                     </hc:TextBox.Text>
                                 </hc:TextBox>
-                                <Border Grid.Row="4" Grid.Column="1" Visibility="{c:Binding Path=IsCoefsVariable}"
+                                <Border Grid.Row="4" Grid.Column="1" Visibility="{c:Binding Path=Parameters.Coefs.IsVariable}"
                                         CornerRadius="7" Background="White" Margin="5,10,10,0">
                                     <Border.Effect>
                                         <DropShadowEffect ShadowDepth="0" Opacity="0.3" />
@@ -225,31 +219,32 @@
                                                         hc:InfoElement.Title="От"
                                                         hc:InfoElement.TitlePlacement="Left" Margin="10 5"
                                                         hc:InfoElement.TitleWidth="60"
-                                                        Text="{Binding  MinCoef, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                        Text="{Binding  Parameters.Coefs.Min, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                         HorizontalAlignment="Stretch" />
                                             <hc:TextBox Grid.Column="1" Grid.Row="0"
                                                         hc:InfoElement.Title="До"
                                                         hc:InfoElement.TitlePlacement="Left" Margin="10 5"
                                                         hc:InfoElement.TitleWidth="60"
-                                                        Text="{Binding  MaxCoef, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                        Text="{Binding  Parameters.Coefs.Max, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                         HorizontalAlignment="Stretch" />
                                             <hc:TextBox Grid.ColumnSpan="2" Grid.Row="1"
                                                         hc:InfoElement.Title="Количество коэффициентов"
                                                         hc:InfoElement.TitlePlacement="Left" Margin="10 5"
                                                         hc:InfoElement.TitleWidth="180"
-                                                        Text="{Binding  CoefsCount, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                        Text="{Binding  Parameters.Coefs.Count, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                         HorizontalAlignment="Stretch" />
                                         </Grid>
                                     </GroupBox>
                                 </Border>
 
-                                <hc:CheckComboBox x:Name="MetodBox" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="5" SelectionChanged="CheckComboBox_SelectionChanged"
+                                <hc:CheckComboBox x:Name="MetodBox" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="5"
+                                                  SelectionChanged="CheckComboBox_SelectionChanged"
                                                   hc:InfoElement.Title="Метод интегрирования"
                                                   hc:InfoElement.TitlePlacement="Left"
                                                   hc:InfoElement.TitleWidth="200"
                                                   Margin="10 5"
                                                   HorizontalAlignment="Stretch"
-                                                 
+
                                                   Style="{StaticResource CheckComboBoxPlus}"
                                                   ItemsSource="{Binding Methods}" />
                             </Grid>
@@ -272,148 +267,176 @@
                         </StackPanel>
                     </Border>-->
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <Button Command="{Binding  MakeTestsCommand}" Content="Сгенерировать тесты" Width="150" Background="#6cc644"
+                        <Button Command="{Binding  MakeTestsCommand}" Content="Сгенерировать тесты" Width="150"
+                                Background="#6cc644"
                                 Foreground="#f5f5f5" />
-                        
+
                         <Button Command="{Binding  StartCommand}" Content="Запуск" Width="70" Background="#4078c0"
                                 Foreground="#f5f5f5" Margin="5,0,0,0" />
                         <Button Command="{Binding ExportCommand}" Content="Экспорт" Width="70" Background="#6e5494"
                                 Foreground="#f5f5f5" Margin="5,0,0,0" />
                         <Button Command="{Binding  ImportCommand}" Content="Импорт" Width="70" Background="#6e5494"
                                 Foreground="#f5f5f5" Margin="5,0,0,0" />
+                        <Button Command="{Binding  ExportPdfCommand}" Content="Экспорт в пдф" Width="70" Background="#6e5494"
+                                Foreground="#f5f5f5" Margin="5,0,0,0" />
                     </StackPanel>
                 </StackPanel>
             </Grid>
 
         </Expander>
-        <Border CornerRadius="7" Background="White" Grid.Column="1" Margin="10,10,10,10" >
+        <Border CornerRadius="7" Background="White" Grid.Column="1" Margin="10,10,10,10">
             <DataGrid ItemsSource="{Binding GeneratedTests}"
                       AutoGenerateColumns="False"
                       IsReadOnly="False"
                       SelectionMode="Single"
-                      SelectionUnit="FullRow"
-            >
+                      SelectionUnit="FullRow">
                 <DataGrid.CellStyle>
                     <Style TargetType="DataGridCell" BasedOn="{StaticResource DataGridCellStyle }">
                         <!-- <Setter Property="Foreground" Value="{Binding Foreground ,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGridRow} }"/> -->
 
-                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Background" Value="Transparent" />
                         <Style.Triggers>
-            <MultiDataTrigger>
-                <MultiDataTrigger.Conditions>
-                    <Condition Binding="{Binding IsSelected,RelativeSource={RelativeSource Self}}" Value="true"/>
-                    <Condition Binding="{Binding SelectionUnit,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGrid}}" Value="Cell"/>
-                </MultiDataTrigger.Conditions>
-                <Setter Property="Foreground" Value="{Binding Foreground ,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGridRow}}"/>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsSelected,RelativeSource={RelativeSource Self}}"
+                                               Value="true" />
+                                    <Condition
+                                        Binding="{Binding SelectionUnit,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGrid}}"
+                                        Value="Cell" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Foreground"
+                                        Value="{Binding Foreground ,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGridRow}}" />
 
-                <Setter Property="Background" Value="Transparent"/>
-            </MultiDataTrigger>
-            <MultiDataTrigger>
-                <MultiDataTrigger.Conditions>
-                    <Condition Binding="{Binding IsSelected,RelativeSource={RelativeSource Self}}" Value="true"/>
-                    <Condition Binding="{Binding IsSelected,RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="False"/>
-                    <Condition Binding="{Binding SelectionUnit,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGrid}}" Value="CellOrRowHeader"/>
-                </MultiDataTrigger.Conditions>
-                <Setter Property="Foreground" Value="{Binding Foreground ,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGridRow}}"/>
+                                <Setter Property="Background" Value="Transparent" />
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsSelected,RelativeSource={RelativeSource Self}}"
+                                               Value="true" />
+                                    <Condition
+                                        Binding="{Binding IsSelected,RelativeSource={RelativeSource AncestorType=DataGridRow}}"
+                                        Value="False" />
+                                    <Condition
+                                        Binding="{Binding SelectionUnit,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGrid}}"
+                                        Value="CellOrRowHeader" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Foreground"
+                                        Value="{Binding Foreground ,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGridRow}}" />
 
-                <Setter Property="Background" Value="Transparent"/>
-            </MultiDataTrigger>
-            <MultiDataTrigger>
-                <MultiDataTrigger.Conditions>
-                    <Condition Binding="{Binding IsSelected,RelativeSource={RelativeSource Self}}" Value="true"/>
-                    <Condition Binding="{Binding IsSelected,RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True"/>
-                    <Condition Binding="{Binding SelectionUnit,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGrid}}" Value="CellOrRowHeader"/>
-                </MultiDataTrigger.Conditions>
-                <Setter Property="Foreground" Value="{Binding Foreground ,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGridRow}}"/>
+                                <Setter Property="Background" Value="Transparent" />
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsSelected,RelativeSource={RelativeSource Self}}"
+                                               Value="true" />
+                                    <Condition
+                                        Binding="{Binding IsSelected,RelativeSource={RelativeSource AncestorType=DataGridRow}}"
+                                        Value="True" />
+                                    <Condition
+                                        Binding="{Binding SelectionUnit,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGrid}}"
+                                        Value="CellOrRowHeader" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Foreground"
+                                        Value="{Binding Foreground ,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGridRow}}" />
 
-            </MultiDataTrigger>
-            <MultiDataTrigger>
-                <MultiDataTrigger.Conditions>
-                    <Condition Binding="{Binding IsSelected,RelativeSource={RelativeSource Self}}" Value="true"/>
-                    <Condition Binding="{Binding SelectionUnit,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGrid}}" Value="FullRow"/>
-                </MultiDataTrigger.Conditions>
-                <Setter Property="Foreground" Value="{Binding Foreground ,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGridRow}}"/>
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsSelected,RelativeSource={RelativeSource Self}}"
+                                               Value="true" />
+                                    <Condition
+                                        Binding="{Binding SelectionUnit,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGrid}}"
+                                        Value="FullRow" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="Foreground"
+                                        Value="{Binding Foreground ,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGridRow}}" />
 
-            </MultiDataTrigger>
-            <MultiTrigger>
-                <MultiTrigger.Conditions>
-                    <Condition Property="IsSelected" Value="true"/>
-                    <Condition Property="Selector.IsSelectionActive" Value="false"/>
-                </MultiTrigger.Conditions>
-                <Setter Property="Background" Value="Transparent"/>
-                <Setter Property="Foreground" Value="{Binding Foreground ,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGridRow}}"/>
-            </MultiTrigger>
-        </Style.Triggers>
+                            </MultiDataTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="true" />
+                                    <Condition Property="Selector.IsSelectionActive" Value="false" />
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background" Value="Transparent" />
+                                <Setter Property="Foreground"
+                                        Value="{Binding Foreground ,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGridRow}}" />
+                            </MultiTrigger>
+                        </Style.Triggers>
                     </Style>
                 </DataGrid.CellStyle>
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow" BasedOn="{StaticResource DataGridRowStyle }">
-                        <Setter Property="Background" >
+                        <Setter Property="Background">
                             <Setter.Value>
                                 <Binding Path="IsPassed" Converter="{StaticResource BackgroundConverter}" />
                             </Setter.Value>
                         </Setter>
-                        <Setter Property="Foreground" >
+                        <Setter Property="Foreground">
                             <Setter.Value>
                                 <Binding Path="IsPassed" Converter="{StaticResource  ForegroundConverter}" />
                             </Setter.Value>
                         </Setter>
                         <Style.Triggers>
                             <Trigger Property="IsMouseOver" Value="true">
-                                <Setter Property="Background" >
+                                <Setter Property="Background">
                                     <Setter.Value>
                                         <Binding Path="IsPassed" Converter="{StaticResource BackgroundConverter}" />
                                     </Setter.Value>
                                 </Setter>
-                                <Setter Property="Foreground" >
+                                <Setter Property="Foreground">
                                     <Setter.Value>
                                         <Binding Path="IsPassed" Converter="{StaticResource  ForegroundConverter}" />
                                     </Setter.Value>
                                 </Setter>
                             </Trigger>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="Background" >
+                                <Setter Property="Background">
                                     <Setter.Value>
                                         <Binding Path="IsPassed" Converter="{StaticResource BackgroundConverter}" />
                                     </Setter.Value>
                                 </Setter>
-                                <Setter Property="TextElement.Foreground" >
+                                <Setter Property="TextElement.Foreground">
                                     <Setter.Value>
                                         <Binding Path="IsPassed" Converter="{StaticResource  ForegroundConverter}" />
                                     </Setter.Value>
                                 </Setter>
                             </Trigger>
-                            
+
                             <MultiTrigger>
                                 <MultiTrigger.Conditions>
-                                    <Condition Property="Selector.IsSelectionActive" Value="false"/>
+                                    <Condition Property="Selector.IsSelectionActive" Value="false" />
                                 </MultiTrigger.Conditions>
-                                <Setter Property="Background" >
+                                <Setter Property="Background">
                                     <Setter.Value>
                                         <Binding Path="IsPassed" Converter="{StaticResource BackgroundConverter}" />
                                     </Setter.Value>
                                 </Setter>
-                                <Setter Property="Foreground" >
+                                <Setter Property="Foreground">
                                     <Setter.Value>
                                         <Binding Path="IsPassed" Converter="{StaticResource  ForegroundConverter}" />
                                     </Setter.Value>
                                 </Setter>
                             </MultiTrigger>
-                            </Style.Triggers>
+                        </Style.Triggers>
                     </Style>
                 </DataGrid.RowStyle>
 
-                
+
                 <DataGrid.Columns>
                     <DataGridCheckBoxColumn Binding="{Binding IsNeedToRun}" Header="Запуск" />
-                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.Min}" Header="Нач. значение" IsReadOnly="True"/>
-                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.Max}" Header="Кон. значение" IsReadOnly="True"/>
-                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.Step}" Header="Шаг" IsReadOnly="True"/>
-                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.IntegrateMethod}" Header="Метод" IsReadOnly="True"/>
-                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.CoefsString}" Header="Коэффициенты" IsReadOnly="True"/>
-                    <DataGridTextColumn Binding="{Binding Test.Ye}" Header="Ожидаемое значение" IsReadOnly="True"/>
-                    <DataGridTextColumn Binding="{Binding Test.Yf}" Header="Фактическое значение значение" IsReadOnly="True"/>
-                    <DataGridTextColumn Binding="{Binding IsPassed}" Header="Пройден" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.Min}" Header="Нач. значение"
+                                        IsReadOnly="True" />
+                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.Max}" Header="Кон. значение"
+                                        IsReadOnly="True" />
+                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.Step}" Header="Шаг" IsReadOnly="True" />
+                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.IntegrateMethod}" Header="Метод"
+                                        IsReadOnly="True" />
+                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.CoefsString}" Header="Коэффициенты"
+                                        IsReadOnly="True" />
+                    <DataGridTextColumn Binding="{Binding Test.Ye}" Header="Ожидаемое значение" IsReadOnly="True" />
+                    <DataGridTextColumn Binding="{Binding Test.Yf}" Header="Фактическое значение значение"
+                                        IsReadOnly="True" />
+                    <DataGridTextColumn Binding="{Binding IsPassed}" Header="Пройден" IsReadOnly="True" />
                 </DataGrid.Columns>
             </DataGrid>
         </Border>

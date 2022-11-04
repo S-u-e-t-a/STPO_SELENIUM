@@ -25,6 +25,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="HandyControls" Version="3.4.2" />
+    <PackageReference Include="itext7" Version="7.2.4"/>
     <PackageReference Include="PropertyChanged.Fody" Version="4.0.5" />
   </ItemGroup>
   <ItemGroup>

@@ -1,27 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
-using System.Windows.Documents;
 using System.Windows.Input;
 
 using PropertyChanged;
 
-using STPO_dynamic_test.IntegrateMethods;
+using STPO_dynamic_test.Misc;
+using STPO_dynamic_test.Model.IntegrateMethods;
 
 
-namespace STPO_dynamic_test;
+namespace STPO_dynamic_test.Model;
 
 [AddINotifyPropertyChangedInterface]
-internal class Test
+public class Test
 {
+    private readonly Func<double, List<double>, double> func = (x, coefs) =>
+    {
+        double FS = 0;
+
+        for (var i = 0; i < coefs.Count; i++)
+        {
+            FS += coefs[i] * Math.Pow(x, i);
+        }
+
+        return FS;
+    };
+
     public Test(InitialTestData initialTestData, string name)
     {
         InitialTestData = initialTestData;
         Name = name;
         var numOfArgs = initialTestData.ToString().Split(' ').Length;
-        if (numOfArgs<5)
+
+        if (numOfArgs < 5)
         {
             Ye = new Result("Число параметров не соответствует ожидаемому и должно быть, как минимум 5!");
         }
@@ -30,6 +42,7 @@ internal class Test
         {
             Ye = new Result("Левая граница диапазона не является числом!");
         }
+
         if (!isNumeric(InitialTestData.Max))
         {
             Ye = new Result("Правая граница диапазона не является числом!");
@@ -37,11 +50,12 @@ internal class Test
 
         if (isNumeric(initialTestData.Min) && isNumeric(initialTestData.Max))
         {
-            if (initialTestData.Min.ToDouble()>=initialTestData.Max.ToDouble())
+            if (initialTestData.Min.ToDouble() >= initialTestData.Max.ToDouble())
             {
-                Ye = new("Левая граница диапазона должна быть < правой границы диапазона!");
+                Ye = new Result("Левая граница диапазона должна быть < правой границы диапазона!");
             }
         }
+
         if (isNumeric(InitialTestData.Step))
         {
             if (InitialTestData.Step.ToDouble() < 0.000001 || InitialTestData.Step.ToDouble() > 0.5)
@@ -65,8 +79,9 @@ internal class Test
         {
             Ye = new Result("Четвертый параметр определяет метод интегрирования и должен быть в пределах[1; 3]");
         }
-        
+
         IntegrateMethod = new CustomIntegral();
+
         if (Ye is null)
         {
             Ye = new Result($"S = {IntegrateMethod.Integrate(InitialTestData, func)}");
@@ -81,49 +96,49 @@ internal class Test
         // Yf = new Result(res);
     }
 
-    private Func<double, List<double>, double> func = (x, coefs) =>
-    {
-        double FS = 0;
-        for (int i = 0; i < coefs.Count; i++) FS += coefs[i] * Math.Pow(x, i);
-
-        return FS;
-    };
     public InitialTestData InitialTestData { get; init; }
     public string Name { get; init; }
+
     [JsonIgnore]
     public Result Ye { get; init; }
+
     [JsonIgnore]
     public Result Yf { get; set; }
+
     [JsonIgnore]
     public IIntegral IntegrateMethod { get; init; }
 
     private bool isNumeric(string str)
     {
-        string symb = "0123456789,-";
-        bool flag = false;
+        var symb = "0123456789,-";
+        var flag = false;
 
-        for (int i = 0; i < str.Length; i++)
+        for (var i = 0; i < str.Length; i++)
         {
             flag = false;
 
-            for (int j = 0; j < symb.Length; j++)
+            for (var j = 0; j < symb.Length; j++)
             {
                 if (symb[j] == str[i])
                 {
-                    flag=true;
+                    flag = true;
                 }
             }
+
             if (flag == false)
+            {
                 return false;
+            }
         }
 
         return true;
     }
+
     public bool IsTestPassed(double EPS)
     {
         if (Yf.IsNumber && Ye.IsNumber)
         {
-            if (Math.Abs(Yf-Ye)<EPS)
+            if (Math.Abs(Yf - Ye) < EPS)
             {
                 return true;
             }
@@ -133,14 +148,13 @@ internal class Test
 
         if (!Yf.IsNumber && !Ye.IsNumber)
         {
-            return Yf==Ye;
+            return Yf == Ye;
         }
 
         return false;
     }
 
-    
-    
+
     private string GetResultFromScript()
     {
         try
@@ -152,23 +166,22 @@ internal class Test
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 RedirectStandardInput = true,
-                RedirectStandardOutput = true
-                
+                RedirectStandardOutput = true,
             };
 
 
-            var proc = new Process(); proc.StartInfo = startInfo; proc.Start();
+            var proc = new Process();
+            proc.StartInfo = startInfo;
+            proc.Start();
 
-            string buffer = string.Empty;
+            var buffer = string.Empty;
             char symb;
-            symb = (char)proc.StandardOutput.Peek();
+            symb = (char) proc.StandardOutput.Peek();
             buffer = proc.StandardOutput.ReadLine();
             proc.StandardInput.Write(Key.Enter);
             proc.WaitForExit();
 
             return buffer;
-
-
         }
         catch (Exception e)
         {
@@ -179,11 +192,12 @@ internal class Test
     public void Run()
     {
         var res = GetResultFromScript();
-        
+
         if (res is null)
         {
             res = "null";
         }
+
         Yf = new Result(res);
     }
 
@@ -226,4 +240,3 @@ internal class Test
     //     return s;
     // }
 }
-
