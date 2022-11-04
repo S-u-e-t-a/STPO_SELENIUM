@@ -13,8 +13,21 @@
            Height="450"
            Width="800"
            d:DataContext="{d:DesignInstance stpoDynamicTest:VM}">
-    <hc:Window.Resources>
-    </hc:Window.Resources>
+    <hc:Window.Resources>  
+        <stpoDynamicTest:BackgroundConverter x:Key="BackgroundConverter"/>  
+        <stpoDynamicTest:ForegroundConverter x:Key="ForegroundConverter"/>  
+        <Style x:Key="DataGridStyle" TargetType="DataGrid">
+            <Setter Property="CellStyle">
+                <Setter.Value>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}" />
+                        <Setter Property="Background" Value="{Binding Background, RelativeSource={RelativeSource TemplatedParent}}" />
+                    </Style>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </hc:Window.Resources>  
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
@@ -274,18 +287,133 @@
 
         </Expander>
         <Border CornerRadius="7" Background="White" Grid.Column="1" Margin="10,10,10,10" >
-            <DataGrid ItemsSource="{Binding GeneratedTests}" AutoGenerateColumns="False" IsReadOnly="True" >
+            <DataGrid ItemsSource="{Binding GeneratedTests}"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="False"
+                      SelectionMode="Single"
+                      SelectionUnit="FullRow"
+            >
+                <DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell" BasedOn="{StaticResource DataGridCellStyle }">
+                        <!-- <Setter Property="Foreground" Value="{Binding Foreground ,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGridRow} }"/> -->
+
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Style.Triggers>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding IsSelected,RelativeSource={RelativeSource Self}}" Value="true"/>
+                    <Condition Binding="{Binding SelectionUnit,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGrid}}" Value="Cell"/>
+                </MultiDataTrigger.Conditions>
+                <Setter Property="Foreground" Value="{Binding Foreground ,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGridRow}}"/>
+
+                <Setter Property="Background" Value="Transparent"/>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding IsSelected,RelativeSource={RelativeSource Self}}" Value="true"/>
+                    <Condition Binding="{Binding IsSelected,RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="False"/>
+                    <Condition Binding="{Binding SelectionUnit,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGrid}}" Value="CellOrRowHeader"/>
+                </MultiDataTrigger.Conditions>
+                <Setter Property="Foreground" Value="{Binding Foreground ,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGridRow}}"/>
+
+                <Setter Property="Background" Value="Transparent"/>
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding IsSelected,RelativeSource={RelativeSource Self}}" Value="true"/>
+                    <Condition Binding="{Binding IsSelected,RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True"/>
+                    <Condition Binding="{Binding SelectionUnit,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGrid}}" Value="CellOrRowHeader"/>
+                </MultiDataTrigger.Conditions>
+                <Setter Property="Foreground" Value="{Binding Foreground ,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGridRow}}"/>
+
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding IsSelected,RelativeSource={RelativeSource Self}}" Value="true"/>
+                    <Condition Binding="{Binding SelectionUnit,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGrid}}" Value="FullRow"/>
+                </MultiDataTrigger.Conditions>
+                <Setter Property="Foreground" Value="{Binding Foreground ,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGridRow}}"/>
+
+            </MultiDataTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsSelected" Value="true"/>
+                    <Condition Property="Selector.IsSelectionActive" Value="false"/>
+                </MultiTrigger.Conditions>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="Foreground" Value="{Binding Foreground ,RelativeSource={RelativeSource FindAncestor,AncestorType=DataGridRow}}"/>
+            </MultiTrigger>
+        </Style.Triggers>
+                    </Style>
+                </DataGrid.CellStyle>
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow" BasedOn="{StaticResource DataGridRowStyle }">
+                        <Setter Property="Background" >
+                            <Setter.Value>
+                                <Binding Path="IsPassed" Converter="{StaticResource BackgroundConverter}" />
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Foreground" >
+                            <Setter.Value>
+                                <Binding Path="IsPassed" Converter="{StaticResource  ForegroundConverter}" />
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" >
+                                    <Setter.Value>
+                                        <Binding Path="IsPassed" Converter="{StaticResource BackgroundConverter}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Foreground" >
+                                    <Setter.Value>
+                                        <Binding Path="IsPassed" Converter="{StaticResource  ForegroundConverter}" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" >
+                                    <Setter.Value>
+                                        <Binding Path="IsPassed" Converter="{StaticResource BackgroundConverter}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="TextElement.Foreground" >
+                                    <Setter.Value>
+                                        <Binding Path="IsPassed" Converter="{StaticResource  ForegroundConverter}" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="Selector.IsSelectionActive" Value="false"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background" >
+                                    <Setter.Value>
+                                        <Binding Path="IsPassed" Converter="{StaticResource BackgroundConverter}" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Foreground" >
+                                    <Setter.Value>
+                                        <Binding Path="IsPassed" Converter="{StaticResource  ForegroundConverter}" />
+                                    </Setter.Value>
+                                </Setter>
+                            </MultiTrigger>
+                            </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
+
                 
                 <DataGrid.Columns>
-                    <DataGridCheckBoxColumn Binding="{Binding IsNeedToRun}" Header="Запуск"/>
-                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.Min}" Header="Нач. значение"/>
-                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.Max}" Header="Кон. значение"/>
-                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.Step}" Header="Шаг"/>
-                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.IntegrateMethod}" Header="Метод"/>
-                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.CoefsString}" Header="Коэффициенты"/>
-                    <DataGridTextColumn Binding="{Binding Test.Ye}" Header="Ожидаемое значение"/>
-                    <DataGridTextColumn Binding="{Binding Test.Yf}" Header="Фактическое значение значение"/>
-                    <DataGridTextColumn Binding="{Binding IsPassed}" Header="Пройден"/>
+                    <DataGridCheckBoxColumn Binding="{Binding IsNeedToRun}" Header="Запуск" />
+                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.Min}" Header="Нач. значение" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.Max}" Header="Кон. значение" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.Step}" Header="Шаг" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.IntegrateMethod}" Header="Метод" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.CoefsString}" Header="Коэффициенты" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Test.Ye}" Header="Ожидаемое значение" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding Test.Yf}" Header="Фактическое значение значение" IsReadOnly="True"/>
+                    <DataGridTextColumn Binding="{Binding IsPassed}" Header="Пройден" IsReadOnly="True"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
