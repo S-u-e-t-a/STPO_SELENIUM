@@ -118,12 +118,8 @@ internal class VM : ViewModelBase
         {
             return _exportPdfCommand ??= new RelayCommand(o =>
             {
-                var saveFileDialog = new SaveFileDialog();
-
-                if (saveFileDialog.ShowDialog() == true)
-                {
-                    PdfExporter.Export(saveFileDialog.FileName, GeneratedTests, Parameters);
-                }
+                var chooseToSaveWin = new ChooseTestsToSave(GeneratedTests, Parameters);
+                chooseToSaveWin.Show();
             });
         }
     }
@@ -152,6 +148,7 @@ internal class VM : ViewModelBase
                     return false;
                 }
 
+
                 return GeneratedTests.Count > 0;
             });
         }
@@ -164,15 +161,33 @@ internal class VM : ViewModelBase
         get
         {
             return _makeTestsCommand ??= new RelayCommand(o =>
-            {
-                var testsCount = CountOfCases.ToDouble();
-                GeneratedTests = new ObservableCollection<TestInDataGrid>();
+                                                          {
+                                                              var testsCount = CountOfCases.ToDouble();
+                                                              GeneratedTests = new ObservableCollection<TestInDataGrid>();
 
-                for (var i = 0; i < testsCount; i++)
-                {
-                    GeneratedTests.Add(new TestInDataGrid(buildTest($"Test {i}")));
-                }
-            });
+                                                              if (!Parameters.Coefs.IsVariable &&
+                                                                  !Parameters.Left.IsVariable &&
+                                                                  !Parameters.Right.IsVariable &&
+                                                                  Parameters.SelectedMethods.Count == 1 &&
+                                                                  !Parameters.Step.IsVariable)
+                                                              {
+                                                                  testsCount = 1;
+                                                              }
+
+                                                              for (var i = 0; i < testsCount; i++)
+                                                              {
+                                                                  GeneratedTests.Add(new TestInDataGrid(buildTest($"Test {i}")));
+                                                              }
+                                                          },
+                                                          _ =>
+                                                          {
+                                                              if (Parameters.SelectedMethods.Count < 1)
+                                                              {
+                                                                  return false;
+                                                              }
+
+                                                              return true;
+                                                          });
         }
     }
 

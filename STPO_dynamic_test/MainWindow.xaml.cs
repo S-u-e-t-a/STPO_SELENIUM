@@ -15,11 +15,13 @@ public partial class MainWindow
 
         DataContext = new VM();
 
-        Methods = new ObservableCollection<IntegrationMethod>
-            {((VM) DataContext).Methods[0],};
+        Methods = new ObservableCollection<IntegrationMethod>();
 
         ((VM) DataContext).Parameters.SelectedMethods = Methods;
-        MetodBox.SelectedItems.Add(((VM) DataContext).Methods[0]);
+
+        //((VM) DataContext).OnPropertyChanged("SelectedMethods");
+
+        //MetodBox.SelectedItems.Add(((VM) DataContext).Methods[0]);
     }
 
     private void CheckComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

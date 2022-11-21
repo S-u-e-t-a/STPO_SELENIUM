@@ -1,0 +1,24 @@
+﻿<hc:Window x:Class="STPO_dynamic_test.ChooseTestsToSave"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:STPO_dynamic_test"
+        xmlns:hc="https://handyorg.github.io/handycontrol"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Title="ChooseTestsToSave" Height="200" Width="300">
+    <Grid>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel HorizontalAlignment="Center">
+                <RadioButton IsChecked="True" Name="OnlyPositive" GroupName="HowToSave" Content="Сохранить только положительные" Margin="10" HorizontalAlignment="Left"/>
+                <RadioButton Name="OnlyNegative" GroupName="HowToSave" Content="Сохранить только отрицательные" Margin="10" HorizontalAlignment="Left"/>
+                <RadioButton Name="All" GroupName="HowToSave" Content="Сохранить все" Margin="10" HorizontalAlignment="Left"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Name="SaveButton" Click="SaveButton_OnClick" Width="100" Content="Сохранить" Margin="10" HorizontalAlignment="Left"/>
+                    <Button Width="100" Content="Отмена" Margin="10" IsCancel="True"/>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</hc:Window>

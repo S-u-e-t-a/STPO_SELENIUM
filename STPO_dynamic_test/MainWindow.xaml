@@ -8,10 +8,12 @@
            xmlns:stpoDynamicTest="clr-namespace:STPO_dynamic_test"
            xmlns:misc="clr-namespace:STPO_dynamic_test.Misc"
            mc:Ignorable="d"
+           Icon="resources/icons/icon.png"
            Title="Динамическое тестирование"
            WindowStartupLocation="CenterScreen"
            ShowTitle="True"
-           Height="450"
+           WindowState="Maximized"
+           Height="600"
            Width="800"
            d:DataContext="{d:DesignInstance stpoDynamicTest:VM}">
     <hc:Window.Resources>
@@ -277,7 +279,7 @@
                                 Foreground="#f5f5f5" Margin="5,0,0,0" />
                         <Button Command="{Binding  ImportCommand}" Content="Импорт" Width="70" Background="#6e5494"
                                 Foreground="#f5f5f5" Margin="5,0,0,0" />
-                        <Button Command="{Binding  ExportPdfCommand}" Content="Экспорт в пдф" Width="70" Background="#6e5494"
+                        <Button Command="{Binding  ExportPdfCommand}" Content="Экспорт в PDF" Width="110" Background="#6e5494"
                                 Foreground="#f5f5f5" Margin="5,0,0,0" />
                     </StackPanel>
                 </StackPanel>
