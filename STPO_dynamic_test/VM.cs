@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Windows;
 
 using Microsoft.Win32;
 
@@ -133,12 +134,25 @@ internal class VM : ViewModelBase
         {
             return _startCommand ??= new RelayCommand(o =>
             {
+                var eps = 1.0;
+
+                try
+                {
+                    eps = Eps.ToDouble();
+                }
+                catch
+                {
+                    MessageBox.Show("Некорректная погрешность");
+
+                    return;
+                }
+
                 foreach (var test in GeneratedTests)
                 {
                     if (test.IsNeedToRun)
                     {
                         test.Test.Run();
-                        test.IsPassed = test.Test.IsTestPassed(Eps.ToDouble());
+                        test.IsPassed = test.Test.IsTestPassed(eps);
                     }
                 }
             }, _ =>
@@ -162,7 +176,19 @@ internal class VM : ViewModelBase
         {
             return _makeTestsCommand ??= new RelayCommand(o =>
                                                           {
-                                                              var testsCount = CountOfCases.ToDouble();
+                                                              var testsCount = 2.0;
+
+                                                              try
+                                                              {
+                                                                  testsCount = CountOfCases.ToDouble();
+                                                              }
+                                                              catch
+                                                              {
+                                                                  MessageBox.Show("Некорректное количество тест кейсов...");
+
+                                                                  return;
+                                                              }
+
                                                               GeneratedTests = new ObservableCollection<TestInDataGrid>();
 
                                                               if (!Parameters.Coefs.IsVariable &&
