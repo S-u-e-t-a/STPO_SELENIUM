@@ -1,16 +1,17 @@
 ﻿using PropertyChanged;
 
 
-namespace STPO_dynamic_test;
-
-[AddINotifyPropertyChangedInterface]
-public class IntegrationMethod
+namespace STPO_dynamic_test
 {
-    public string Name { get; set; }
-    public string Id { get; set; }
-
-    public override string ToString()
+    [AddINotifyPropertyChangedInterface]
+    public class IntegrationMethod
     {
-        return Name;
+        public string Name { get; set; }
+        public string Id { get; set; }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

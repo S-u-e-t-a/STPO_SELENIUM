@@ -12,46 +12,47 @@ using STPO_dynamic_test.Misc;
 using STPO_dynamic_test.ParametersVM;
 
 
-namespace STPO_dynamic_test;
-
-public partial class ChooseTestsToSave
+namespace STPO_dynamic_test
 {
-    private readonly ObservableCollection<TestInDataGrid> _tests;
-    private readonly TestParametersVM _parametersVm;
-
-    public ChooseTestsToSave(ObservableCollection<TestInDataGrid> tests, TestParametersVM parametersVm)
+    public partial class ChooseTestsToSave
     {
-        _tests = tests;
-        _parametersVm = parametersVm;
-        InitializeComponent();
-    }
+        private readonly ObservableCollection<TestInDataGrid> _tests;
+        private readonly TestParametersVM _parametersVm;
 
-    //МНЕ ОЧЕНЬ ЛЕНЬ ПИСАТЬ ЭТО В VM!!
-    private void SaveButton_OnClick(object sender, RoutedEventArgs e)
-    {
-        var tests = _tests.Clone().ToList();
-
-        if ((bool) OnlyPositive.IsChecked)
+        public ChooseTestsToSave(ObservableCollection<TestInDataGrid> tests, TestParametersVM parametersVm)
         {
-            tests = tests.Where(t => t.IsPassed == true).ToList();
+            _tests = tests;
+            _parametersVm = parametersVm;
+            InitializeComponent();
         }
 
-        else if ((bool) OnlyNegative.IsChecked)
+        //МНЕ ОЧЕНЬ ЛЕНЬ ПИСАТЬ ЭТО В VM!!
+        private void SaveButton_OnClick(object sender, RoutedEventArgs e)
         {
-            tests = tests.Where(t => t.IsPassed == false).ToList();
-        }
-        else
-        {
-            tests = tests.OrderBy(t => t.IsPassed).ToList();
-        }
+            var tests = _tests.Clone().ToList();
 
-        var saveFileDialog = new SaveFileDialog();
+            if ((bool) OnlyPositive.IsChecked)
+            {
+                tests = tests.Where(t => t.IsPassed == true).ToList();
+            }
 
-        if (saveFileDialog.ShowDialog() == true)
-        {
-            PdfExporter.Export(saveFileDialog.FileName, tests, _parametersVm);
+            else if ((bool) OnlyNegative.IsChecked)
+            {
+                tests = tests.Where(t => t.IsPassed == false).ToList();
+            }
+            else
+            {
+                tests = tests.OrderBy(t => t.IsPassed).ToList();
+            }
+
+            var saveFileDialog = new SaveFileDialog();
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                PdfExporter.Export(saveFileDialog.FileName, tests, _parametersVm);
+            }
+
+            Close();
         }
-
-        Close();
     }
 }

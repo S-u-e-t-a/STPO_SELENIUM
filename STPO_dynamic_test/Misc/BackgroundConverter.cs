@@ -4,29 +4,30 @@ using System.Windows.Data;
 using System.Windows.Media;
 
 
-namespace STPO_dynamic_test.Misc;
-
-public class BackgroundConverter : IValueConverter
+namespace STPO_dynamic_test.Misc
 {
-    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    public class BackgroundConverter : IValueConverter
     {
-        if (value is null)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return new SolidColorBrush((Color) ColorConverter.ConvertFromString("#fafafa")!);
-        }
-
-        if ((bool) value)
-        {
+            if (value is null)
             {
-                return new SolidColorBrush((Color) ColorConverter.ConvertFromString("#99ff99")!);
+                return new SolidColorBrush((Color) ColorConverter.ConvertFromString("#fafafa")!);
             }
+
+            if ((bool) value)
+            {
+                {
+                    return new SolidColorBrush((Color) ColorConverter.ConvertFromString("#99ff99")!);
+                }
+            }
+
+            return new SolidColorBrush((Color) ColorConverter.ConvertFromString("#ff5050")!);
         }
 
-        return new SolidColorBrush((Color) ColorConverter.ConvertFromString("#ff5050")!);
-    }
-
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    {
-        throw new NotImplementedException();
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

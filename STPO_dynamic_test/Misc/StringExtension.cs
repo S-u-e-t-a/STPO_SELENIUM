@@ -1,12 +1,13 @@
 ﻿using System.Globalization;
 
 
-namespace STPO_dynamic_test.Misc;
-
-public static class StringExtension
+namespace STPO_dynamic_test.Misc
 {
-    public static double ToDouble(this string str)
+    public static class StringExtension
     {
-        return double.Parse(str, CultureInfo.GetCultureInfo("de-DE").NumberFormat);
+        public static double ToDouble(this string str)
+        {
+            return double.Parse(str, CultureInfo.GetCultureInfo("de-DE").NumberFormat);
+        }
     }
 }

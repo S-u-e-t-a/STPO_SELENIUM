@@ -3,17 +3,18 @@
 using STPO_dynamic_test.Model;
 
 
-namespace STPO_dynamic_test.ParametersVM;
-
-[AddINotifyPropertyChangedInterface]
-public class TestInDataGrid
+namespace STPO_dynamic_test.ParametersVM
 {
-    public TestInDataGrid(Test test)
+    [AddINotifyPropertyChangedInterface]
+    public class TestInDataGrid
     {
-        Test = test;
-    }
+        public TestInDataGrid(Test test)
+        {
+            Test = test;
+        }
 
-    public bool IsNeedToRun { get; set; } = true;
-    public bool? IsPassed { get; set; }
-    public Test Test { get; set; }
+        public bool IsNeedToRun { get; set; } = true;
+        public bool? IsPassed { get; set; }
+        public Test Test { get; set; }
+    }
 }

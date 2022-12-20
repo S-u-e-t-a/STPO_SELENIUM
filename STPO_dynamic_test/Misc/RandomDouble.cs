@@ -1,14 +1,15 @@
 ﻿using System;
 
 
-namespace STPO_dynamic_test.Misc;
-
-public static class RandomDouble
+namespace STPO_dynamic_test.Misc
 {
-    public static double GetRandomDouble(double min, double max)
+    public static class RandomDouble
     {
-        var rnd = new Random();
+        public static double GetRandomDouble(double min, double max)
+        {
+            var rnd = new Random();
 
-        return rnd.NextDouble() * (max - min) + min;
+            return rnd.NextDouble() * (max - min) + min;
+        }
     }
 }

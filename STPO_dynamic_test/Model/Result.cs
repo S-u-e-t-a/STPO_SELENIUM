@@ -1,69 +1,70 @@
-﻿namespace STPO_dynamic_test.Model;
-
-public class Result
+﻿namespace STPO_dynamic_test.Model
 {
-    private readonly double doubleValue;
-
-    public Result(string value)
+    public class Result
     {
-        Value = value;
-        doubleValue = double.NaN;
-        var s = value;
+        private readonly double doubleValue;
 
-        if (value.StartsWith("S = "))
+        public Result(string value)
         {
-            s = s.Remove(0, 4);
+            Value = value;
+            doubleValue = double.NaN;
+            var s = value;
+
+            if (value.StartsWith("S = "))
+            {
+                s = s.Remove(0, 4);
+            }
+
+            IsNumber = double.TryParse(s, out doubleValue);
         }
 
-        IsNumber = double.TryParse(s, out doubleValue);
-    }
+        public string Value { get; set; }
 
-    public string Value { get; init; }
+        public bool IsNumber { get; set; }
 
-    public bool IsNumber { get; init; }
-
-    public double ToDouble()
-    {
-        return doubleValue;
-    }
-
-    public static double operator -(Result lResult, Result rResult)
-    {
-        return lResult.ToDouble() - rResult.ToDouble();
-    }
-
-    public static bool operator ==(Result lResult, Result rResult)
-    {
-        if (lResult is null && rResult is null)
+        public double ToDouble()
         {
-            return true;
+            return doubleValue;
         }
 
-        if (lResult is null || rResult is null)
+        public static double operator -(Result lResult, Result rResult)
         {
+            return lResult.ToDouble() - rResult.ToDouble();
+        }
+
+        public static bool operator ==(Result lResult, Result rResult)
+        {
+            if (lResult is null && rResult is null)
+            {
+                return true;
+            }
+
+            if (lResult is null || rResult is null)
+            {
+                return false;
+            }
+
+            if (!lResult.IsNumber && !rResult.IsNumber)
+            {
+                return lResult.Value == rResult.Value;
+            }
+
+            if (lResult.IsNumber && rResult.IsNumber)
+            {
+                return lResult.doubleValue == rResult.doubleValue;
+            }
+
             return false;
         }
 
-        if (!lResult.IsNumber && !rResult.IsNumber)
+        public static bool operator !=(Result lResult, Result rResult)
         {
-            return lResult.Value == rResult.Value;
+            return !(lResult == rResult);
         }
 
-        if (lResult.IsNumber && rResult.IsNumber)
+        public override string ToString()
         {
-            return lResult.doubleValue == rResult.doubleValue;
+            return Value;
         }
-
-        return false;
-    }
-
-    public static bool operator !=(Result lResult, Result rResult)
-    {
-        return !(lResult == rResult);
-    }
-
-    public override string ToString()
-    {
-        return Value;
     }
 }

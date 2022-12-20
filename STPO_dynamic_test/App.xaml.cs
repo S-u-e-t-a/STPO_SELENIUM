@@ -4,23 +4,24 @@ using System.Windows.Media;
 using HandyControl.Themes;
 
 
-namespace STPO_dynamic_test;
-
-public partial class App : Application
+namespace STPO_dynamic_test
 {
-    internal void UpdateTheme(ApplicationTheme theme)
+    public partial class App : Application
     {
-        if (ThemeManager.Current.ApplicationTheme != theme)
+        internal void UpdateTheme(ApplicationTheme theme)
         {
-            ThemeManager.Current.ApplicationTheme = theme;
+            if (ThemeManager.Current.ApplicationTheme != theme)
+            {
+                ThemeManager.Current.ApplicationTheme = theme;
+            }
         }
-    }
 
-    internal void UpdateAccent(Brush accent)
-    {
-        if (ThemeManager.Current.AccentColor != accent)
+        internal void UpdateAccent(Brush accent)
         {
-            ThemeManager.Current.AccentColor = accent;
+            if (ThemeManager.Current.AccentColor != accent)
+            {
+                ThemeManager.Current.AccentColor = accent;
+            }
         }
     }
 }

@@ -1,29 +1,30 @@
 ﻿using STPO_dynamic_test.Misc;
 
 
-namespace STPO_dynamic_test.ParametersVM;
-
-public class VariableParameterArray : VariableParameter
+namespace STPO_dynamic_test.ParametersVM
 {
-    public int Count { get; set; }
-
-    public new string GetValue()
+    public class VariableParameterArray : VariableParameter
     {
-        if (!IsVariable)
+        public int Count { get; set; }
+
+        public new string GetValue()
         {
-            return Value;
+            if (!IsVariable)
+            {
+                return Value;
+            }
+
+            var coefs = "";
+
+            for (var i = 0; i < Count; i++)
+            {
+                coefs += RandomDouble.GetRandomDouble(Min, Max).ToString().Replace('.', ',');
+                coefs += " ";
+            }
+
+            coefs = coefs.Substring(0, coefs.Length - 1);
+
+            return coefs;
         }
-
-        var coefs = "";
-
-        for (var i = 0; i < Count; i++)
-        {
-            coefs += RandomDouble.GetRandomDouble(Min, Max).ToString().Replace('.', ',');
-            coefs += " ";
-        }
-
-        coefs = coefs.Substring(0, coefs.Length - 1);
-
-        return coefs;
     }
 }
