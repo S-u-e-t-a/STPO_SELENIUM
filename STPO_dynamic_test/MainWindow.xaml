@@ -39,16 +39,16 @@
                         </Border.Effect>
                         <GroupBox Header="Настройки генератора тест кейсов" Style="{StaticResource GroupBoxOriginal}">
                             <StackPanel>
-                                <hc:TextBox hc:InfoElement.Title="Количество тест-кейсов"
-                                            hc:InfoElement.TitlePlacement="Left" Margin="10 5"
-                                            hc:InfoElement.TitleWidth="200"
-                                            Text="{Binding CountOfCases,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged }"
-                                            HorizontalAlignment="Stretch" />
-                                <hc:TextBox hc:InfoElement.Title="Допустимая погрешность"
-                                            hc:InfoElement.TitlePlacement="Left" Margin="10 5"
-                                            hc:InfoElement.TitleWidth="200"
-                                            Text="{Binding Eps,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged }"
-                                            HorizontalAlignment="Stretch" />
+                                <hc:NumericUpDown hc:InfoElement.Title="Количество тест-кейсов"
+                                                  hc:InfoElement.TitlePlacement="Left" Margin="10 5"
+                                                  hc:InfoElement.TitleWidth="200"
+                                                  Value="{Binding CountOfCases,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged }"
+                                                  HorizontalAlignment="Stretch" />
+                                <hc:NumericUpDown hc:InfoElement.Title="Допустимая погрешность"
+                                                  hc:InfoElement.TitlePlacement="Left" Margin="10 5"
+                                                  hc:InfoElement.TitleWidth="200"
+                                                  Value="{Binding Eps,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged }"
+                                                  HorizontalAlignment="Stretch" />
                             </StackPanel>
                         </GroupBox>
 
@@ -78,13 +78,15 @@
 
                                 <CheckBox Grid.Row="1" IsChecked="{Binding Parameters.Left.IsVariable}"
                                           HorizontalAlignment="Center" />
-                                <hc:TextBox Grid.Column="1" Grid.Row="1" Visibility="{c:Binding Path=!Parameters.Left.IsVariable}"
+                                <hc:TextBox Grid.Column="1" Grid.Row="1"
+                                            Visibility="{c:Binding Path=!Parameters.Left.IsVariable}"
                                             hc:InfoElement.Title="Левая граница диапазона"
                                             hc:InfoElement.TitlePlacement="Left" Margin="10 5"
                                             hc:InfoElement.TitleWidth="200"
                                             Text="{Binding Parameters.Left.Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                             HorizontalAlignment="Stretch" />
-                                <Border Grid.Row="1" Grid.Column="1" Visibility="{c:Binding Path=Parameters.Left.IsVariable}"
+                                <Border Grid.Row="1" Grid.Column="1"
+                                        Visibility="{c:Binding Path=Parameters.Left.IsVariable}"
                                         CornerRadius="7" Background="White" Margin="5,10,10,0">
                                     <Border.Effect>
                                         <DropShadowEffect ShadowDepth="0" Opacity="0.3" />
@@ -96,24 +98,27 @@
                                                 <ColumnDefinition />
                                                 <ColumnDefinition />
                                             </Grid.ColumnDefinitions>
-                                            <hc:TextBox Grid.Column="0"
-                                                        hc:InfoElement.Title="От"
-                                                        hc:InfoElement.TitlePlacement="Left" Margin="10 5"
-                                                        hc:InfoElement.TitleWidth="60"
-                                                        Text="{Binding  Parameters.Left.Min, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                        HorizontalAlignment="Stretch" />
-                                            <hc:TextBox Grid.Column="1"
-                                                        hc:InfoElement.Title="До"
-                                                        hc:InfoElement.TitlePlacement="Left" Margin="10 5"
-                                                        hc:InfoElement.TitleWidth="60"
-                                                        Text="{Binding  Parameters.Left.Max, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                        HorizontalAlignment="Stretch" />
+                                            <hc:NumericUpDown Grid.Column="0"
+                                                              Style="{StaticResource NumericUpDownExtend}"
+                                                              hc:InfoElement.Title="От"
+                                                              hc:InfoElement.TitlePlacement="Left" Margin="10 5"
+                                                              hc:InfoElement.TitleWidth="40"
+                                                              Value="{Binding  Parameters.Left.Min, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                              HorizontalAlignment="Stretch" />
+                                            <hc:NumericUpDown Grid.Column="1"
+                                                              Style="{StaticResource NumericUpDownExtend}"
+                                                              hc:InfoElement.Title="До"
+                                                              hc:InfoElement.TitlePlacement="Left" Margin="10 5"
+                                                              hc:InfoElement.TitleWidth="40"
+                                                              Value="{Binding  Parameters.Left.Max, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                              HorizontalAlignment="Stretch" />
                                         </Grid>
                                     </GroupBox>
                                 </Border>
 
 
-                                <CheckBox Grid.Row="2" Grid.Column="0" IsChecked="{Binding  Parameters.Right.IsVariable}"
+                                <CheckBox Grid.Row="2" Grid.Column="0"
+                                          IsChecked="{Binding  Parameters.Right.IsVariable}"
                                           HorizontalAlignment="Center" />
                                 <hc:TextBox Grid.Column="1" Grid.Row="2"
                                             Visibility="{c:Binding Path=!Parameters.Right.IsVariable}"
@@ -122,7 +127,8 @@
                                             hc:InfoElement.TitleWidth="200"
                                             Text="{Binding Parameters.Right.Value,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged }"
                                             HorizontalAlignment="Stretch" />
-                                <Border Grid.Row="2" Grid.Column="1" Visibility="{c:Binding Path=Parameters.Right.IsVariable}"
+                                <Border Grid.Row="2" Grid.Column="1"
+                                        Visibility="{c:Binding Path=Parameters.Right.IsVariable}"
                                         CornerRadius="7" Background="White" Margin="5,10,10,0">
                                     <Border.Effect>
                                         <DropShadowEffect ShadowDepth="0" Opacity="0.3" />
@@ -134,18 +140,21 @@
                                                 <ColumnDefinition />
                                                 <ColumnDefinition />
                                             </Grid.ColumnDefinitions>
-                                            <hc:TextBox Grid.Column="0"
-                                                        hc:InfoElement.Title="От"
-                                                        hc:InfoElement.TitlePlacement="Left" Margin="10 5"
-                                                        hc:InfoElement.TitleWidth="60"
-                                                        Text="{Binding  Parameters.Right.Min, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                        HorizontalAlignment="Stretch" />
-                                            <hc:TextBox Grid.Column="1"
-                                                        hc:InfoElement.Title="До"
-                                                        hc:InfoElement.TitlePlacement="Left" Margin="10 5"
-                                                        hc:InfoElement.TitleWidth="60"
-                                                        Text="{Binding   Parameters.Right.Max, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                        HorizontalAlignment="Stretch" />
+                                            <hc:NumericUpDown Grid.Column="0"
+                                                              Style="{StaticResource NumericUpDownExtend}"
+                                                              hc:InfoElement.Title="От"
+                                                              hc:InfoElement.TitlePlacement="Left" Margin="10 5"
+                                                              hc:InfoElement.TitleWidth="40"
+                                                              Value="{Binding  Parameters.Right.Min, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                              HorizontalAlignment="Stretch" />
+                                            <hc:NumericUpDown Grid.Column="1"
+                                                              Style="{StaticResource NumericUpDownExtend}"
+
+                                                              hc:InfoElement.Title="До"
+                                                              hc:InfoElement.TitlePlacement="Left" Margin="10 5"
+                                                              hc:InfoElement.TitleWidth="40"
+                                                              Value="{Binding   Parameters.Right.Max, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                              HorizontalAlignment="Stretch" />
                                         </Grid>
                                     </GroupBox>
                                 </Border>
@@ -153,13 +162,15 @@
 
                                 <CheckBox Grid.Row="3" IsChecked="{Binding Parameters.Step.IsVariable}"
                                           HorizontalAlignment="Center" />
-                                <hc:TextBox Grid.Column="1" Grid.Row="3" Visibility="{c:Binding Path=!Parameters.Step.IsVariable}"
+                                <hc:TextBox Grid.Column="1" Grid.Row="3"
+                                            Visibility="{c:Binding Path=!Parameters.Step.IsVariable}"
                                             hc:InfoElement.Title="Шаг интегрирования"
                                             hc:InfoElement.TitlePlacement="Left" Margin="10 5"
                                             hc:InfoElement.TitleWidth="200"
                                             Text="{Binding Parameters.Step.Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                             HorizontalAlignment="Stretch" />
-                                <Border Grid.Row="3" Grid.Column="1" Visibility="{c:Binding Path=Parameters.Step.IsVariable}"
+                                <Border Grid.Row="3" Grid.Column="1"
+                                        Visibility="{c:Binding Path=Parameters.Step.IsVariable}"
                                         CornerRadius="7" Background="White" Margin="5,10,10,0">
                                     <Border.Effect>
                                         <DropShadowEffect ShadowDepth="0" Opacity="0.3" />
@@ -171,18 +182,22 @@
                                                 <ColumnDefinition />
                                                 <ColumnDefinition />
                                             </Grid.ColumnDefinitions>
-                                            <hc:TextBox Grid.Column="0"
-                                                        hc:InfoElement.Title="От"
-                                                        hc:InfoElement.TitlePlacement="Left" Margin="10 5"
-                                                        hc:InfoElement.TitleWidth="60"
-                                                        Text="{Binding  Parameters.Step.Min, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                        HorizontalAlignment="Stretch" />
-                                            <hc:TextBox Grid.Column="1"
-                                                        hc:InfoElement.Title="До"
-                                                        hc:InfoElement.TitlePlacement="Left" Margin="10 5"
-                                                        hc:InfoElement.TitleWidth="60"
-                                                        Text="{Binding  Parameters.Step.Max, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                        HorizontalAlignment="Stretch" />
+                                            <hc:NumericUpDown Grid.Column="0"
+                                                              Style="{StaticResource NumericUpDownExtend}"
+
+                                                              hc:InfoElement.Title="От"
+                                                              hc:InfoElement.TitlePlacement="Left" Margin="10 5"
+                                                              hc:InfoElement.TitleWidth="40"
+                                                              Value="{Binding  Parameters.Step.Min, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                              HorizontalAlignment="Stretch" />
+                                            <hc:NumericUpDown Grid.Column="1"
+                                                              Style="{StaticResource NumericUpDownExtend}"
+
+                                                              hc:InfoElement.Title="До"
+                                                              hc:InfoElement.TitlePlacement="Left" Margin="10 5"
+                                                              hc:InfoElement.TitleWidth="40"
+                                                              Value="{Binding  Parameters.Step.Max, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                              HorizontalAlignment="Stretch" />
                                         </Grid>
                                     </GroupBox>
                                 </Border>
@@ -201,7 +216,8 @@
                                                  UpdateSourceTrigger="PropertyChanged" />
                                     </hc:TextBox.Text>
                                 </hc:TextBox>
-                                <Border Grid.Row="4" Grid.Column="1" Visibility="{c:Binding Path=Parameters.Coefs.IsVariable}"
+                                <Border Grid.Row="4" Grid.Column="1"
+                                        Visibility="{c:Binding Path=Parameters.Coefs.IsVariable}"
                                         CornerRadius="7" Background="White" Margin="5,10,10,0">
                                     <Border.Effect>
                                         <DropShadowEffect ShadowDepth="0" Opacity="0.3" />
@@ -217,24 +233,27 @@
                                                 <ColumnDefinition />
                                                 <ColumnDefinition />
                                             </Grid.ColumnDefinitions>
-                                            <hc:TextBox Grid.Column="0" Grid.Row="0"
-                                                        hc:InfoElement.Title="От"
-                                                        hc:InfoElement.TitlePlacement="Left" Margin="10 5"
-                                                        hc:InfoElement.TitleWidth="60"
-                                                        Text="{Binding  Parameters.Coefs.Min, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                        HorizontalAlignment="Stretch" />
-                                            <hc:TextBox Grid.Column="1" Grid.Row="0"
-                                                        hc:InfoElement.Title="До"
-                                                        hc:InfoElement.TitlePlacement="Left" Margin="10 5"
-                                                        hc:InfoElement.TitleWidth="60"
-                                                        Text="{Binding  Parameters.Coefs.Max, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                        HorizontalAlignment="Stretch" />
-                                            <hc:TextBox Grid.ColumnSpan="2" Grid.Row="1"
-                                                        hc:InfoElement.Title="Количество коэффициентов"
-                                                        hc:InfoElement.TitlePlacement="Left" Margin="10 5"
-                                                        hc:InfoElement.TitleWidth="180"
-                                                        Text="{Binding  Parameters.Coefs.Count, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                        HorizontalAlignment="Stretch" />
+                                            <hc:NumericUpDown Grid.Column="0" Grid.Row="0"
+                                                              Style="{StaticResource NumericUpDownExtend}"
+                                                              hc:InfoElement.Title="От"
+                                                              hc:InfoElement.TitlePlacement="Left" Margin="10 5"
+                                                              hc:InfoElement.TitleWidth="40"
+                                                              Value="{Binding  Parameters.Coefs.Min, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                              HorizontalAlignment="Stretch" />
+                                            <hc:NumericUpDown Grid.Column="1" Grid.Row="0"
+                                                              Style="{StaticResource NumericUpDownExtend}"
+                                                              hc:InfoElement.Title="До"
+                                                              hc:InfoElement.TitlePlacement="Left" Margin="10 5"
+                                                              hc:InfoElement.TitleWidth="40"
+                                                              Value="{Binding  Parameters.Coefs.Max, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                              HorizontalAlignment="Stretch" />
+                                            <hc:NumericUpDown Grid.ColumnSpan="2" Grid.Row="1"
+                                                              Style="{StaticResource NumericUpDownExtend}"
+                                                              hc:InfoElement.Title="Количество коэффициентов"
+                                                              hc:InfoElement.TitlePlacement="Left" Margin="10 5"
+                                                              hc:InfoElement.TitleWidth="180"
+                                                              Value="{Binding  Parameters.Coefs.Count, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                              HorizontalAlignment="Stretch" />
                                         </Grid>
                                     </GroupBox>
                                 </Border>
@@ -279,7 +298,8 @@
                                 Foreground="#f5f5f5" Margin="5,0,0,0" />
                         <Button Command="{Binding  ImportCommand}" Content="Импорт" Width="70" Background="#6e5494"
                                 Foreground="#f5f5f5" Margin="5,0,0,0" />
-                        <Button Command="{Binding  ExportPdfCommand}" Content="Экспорт в PDF" Width="110" Background="#6e5494"
+                        <Button Command="{Binding  ExportPdfCommand}" Content="Экспорт в PDF" Width="110"
+                                Background="#6e5494"
                                 Foreground="#f5f5f5" Margin="5,0,0,0" />
                     </StackPanel>
                 </StackPanel>

@@ -1,4 +1,6 @@
-﻿using STPO_dynamic_test.Misc;
+﻿using System.Collections.Generic;
+using System.Linq;
+using STPO_dynamic_test.Misc;
 
 
 namespace STPO_dynamic_test.ParametersVM
@@ -14,17 +16,15 @@ namespace STPO_dynamic_test.ParametersVM
                 return Value;
             }
 
-            var coefs = "";
-
-            for (var i = 0; i < Count; i++)
+            var coefs = new List<double>();
+            for (int i = 0; i < Count; i++)
             {
-                coefs += RandomDouble.GetRandomDouble(Min, Max).ToString().Replace('.', ',');
-                coefs += " ";
+                coefs.Add(RandomDouble.GetRandomDouble(Min, Max));
             }
 
-            coefs = coefs.Substring(0, coefs.Length - 1);
-
-            return coefs;
+            var coefsStr = string.Join(" ", coefs.Select(x => DoubleStringService.DoubleToString(x, ",")));
+            
+            return coefsStr;
         }
     }
 }

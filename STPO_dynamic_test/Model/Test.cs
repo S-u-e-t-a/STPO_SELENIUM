@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
+using System.Net;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
-
 using PropertyChanged;
 
 using STPO_dynamic_test.Misc;
 using STPO_dynamic_test.Model.IntegrateMethods;
+using MessageBox = HandyControl.Controls.MessageBox;
 
 
 namespace STPO_dynamic_test.Model
@@ -50,7 +55,7 @@ namespace STPO_dynamic_test.Model
 
             if (isNumeric(initialTestData.Min) && isNumeric(initialTestData.Max))
             {
-                if (initialTestData.Min.ToDouble() >= initialTestData.Max.ToDouble())
+                if (initialTestData.Min.ToDouble(",") >= initialTestData.Max.ToDouble(","))
                 {
                     Ye = new Result("Левая граница диапазона должна быть < правой границы диапазона!");
                 }
@@ -58,7 +63,7 @@ namespace STPO_dynamic_test.Model
 
             if (isNumeric(InitialTestData.Step))
             {
-                if (InitialTestData.Step.ToDouble() < 0.000001 || InitialTestData.Step.ToDouble() > 0.5)
+                if (InitialTestData.Step.ToDouble(",") < 0.000001 || InitialTestData.Step.ToDouble(",") > 0.5)
                 {
                     Ye = new Result("Шаг интегрирования должен быть в пределах [0.000001;0.5]");
                 }
@@ -84,7 +89,7 @@ namespace STPO_dynamic_test.Model
 
             if (Ye is null)
             {
-                Ye = new Result($"S = {IntegrateMethod.Integrate(InitialTestData, func)}");
+                Ye = new Result($"S = {DoubleStringService.DoubleToString(IntegrateMethod.Integrate(InitialTestData, func))}");
             }
 
             // var res = GetResultFromScript();
@@ -157,11 +162,17 @@ namespace STPO_dynamic_test.Model
 
         private string GetResultFromScript()
         {
+            var fileName = "Integral3x.exe";
+            if (!File.Exists(fileName))
+            {
+                MessageBox.Error($"Файл {fileName} не найден!", "Ошибка");
+                return null;
+            }
             try
             {
                 var startInfo = new ProcessStartInfo
                 {
-                    FileName = @"Integral3x.exe",
+                    FileName = fileName,
                     Arguments = InitialTestData.ToString(),
                     UseShellExecute = false,
                     CreateNoWindow = true,

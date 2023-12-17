@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows;
 
 using Microsoft.Win32;
@@ -11,6 +12,7 @@ using Microsoft.Win32;
 using STPO_dynamic_test.Misc;
 using STPO_dynamic_test.Model;
 using STPO_dynamic_test.ParametersVM;
+using MessageBox = HandyControl.Controls.MessageBox;
 
 
 namespace STPO_dynamic_test
@@ -43,31 +45,92 @@ namespace STPO_dynamic_test
         }
 
 
-        private Test buildTest(string name)
+        private List<Test> BuildTests(int count)
         {
-            var coefs = Parameters.Coefs.GetValue().Split(" ");
-
-            var init = new InitialTestData
+            var tests = new List<Test>();
+            for (int i = 0; i < count; i++)
             {
-                Coefs = coefs.ToList(),
-                IntegrateMethod = getMethod().Id,
-                Max = Parameters.Right.GetValue(),
-                Min = Parameters.Left.GetValue(),
-                Step = Parameters.Step.GetValue(),
-            };
+                var coefs = Parameters.Coefs.GetValue().Split(" ").ToList();
+                var method = getMethod().Id;
+                var max = Parameters.Right.Value;
+                var min = Parameters.Left.Value;
+                var integrateStep = Parameters.Step.Value;
+                if (i == 0)
+                {
+                    if (Parameters.Left.IsVariable)
+                    {
+                        min = DoubleStringService.DoubleToString(Parameters.Left.Min, ",");
+                    }
 
-            var test = new Test(init, name);
+                    if (Parameters.Right.IsVariable)
+                    {
+                        max = DoubleStringService.DoubleToString(Parameters.Right.Min, ",");
+                    }
 
-            return test;
+                    if (Parameters.Step.IsVariable)
+                    {
+                        integrateStep = DoubleStringService.DoubleToString(Parameters.Step.Min, ",");
+                    }
+                }
+                else if (i == count - 1)
+                {
+                    if (Parameters.Left.IsVariable)
+                    {
+                        min = DoubleStringService.DoubleToString(Parameters.Left.Max, ",");
+                    }
+
+                    if (Parameters.Right.IsVariable)
+                    {
+                        max = DoubleStringService.DoubleToString(Parameters.Right.Max, ",");
+                    }
+
+                    if (Parameters.Step.IsVariable)
+                    {
+                        integrateStep = DoubleStringService.DoubleToString(Parameters.Step.Max, ",");
+                    }
+                }
+                else
+                {
+                    if (Parameters.Left.IsVariable)
+                    {
+                        var step = (Parameters.Left.Max - Parameters.Left.Min) / (count-1);
+                        min = DoubleStringService.DoubleToString(Parameters.Left.Min + i * step, ",");
+                    }
+
+                    if (Parameters.Right.IsVariable)
+                    {
+                        var step = (Parameters.Right.Max - Parameters.Right.Min) / (count-1);
+                        max = DoubleStringService.DoubleToString(Parameters.Right.Min + i * step, ",");
+                    }
+
+                    if (Parameters.Step.IsVariable)
+                    {
+                        var step = (Parameters.Step.Max - Parameters.Step.Min) / (count-1);
+                        integrateStep = DoubleStringService.DoubleToString(Parameters.Step.Min + i * step, ",");
+                    }
+                }
+
+                var init = new InitialTestData()
+                {
+                    Coefs = coefs,
+                    IntegrateMethod = method,
+                    Max = max,
+                    Min = min,
+                    Step = integrateStep
+                };
+                tests.Add(new Test(init, $"Test {i}"));
+            }
+
+            return tests;
         }
 
-    #endregion
+        #endregion
 
 
     #region Properties
 
-        public string CountOfCases { get; set; } = "10";
-        public string Eps { get; set; } = "0,1";
+        public int CountOfCases { get; set; } = 10;
+        public double Eps { get; set; } = 0.1;
 
 
         public TestParametersVM Parameters { get; set; } = new TestParametersVM()
@@ -134,15 +197,9 @@ namespace STPO_dynamic_test
             {
                 return _startCommand ??= new RelayCommand(o =>
                 {
-                    var eps = 1.0;
-
-                    try
+                    if (Eps<0)
                     {
-                        eps = Eps.ToDouble();
-                    }
-                    catch
-                    {
-                        MessageBox.Show("Некорректная погрешность");
+                        MessageBox.Error("Некорректная погрешность","Ошибка");
 
                         return;
                     }
@@ -152,7 +209,7 @@ namespace STPO_dynamic_test
                         if (test.IsNeedToRun)
                         {
                             test.Test.Run();
-                            test.IsPassed = test.Test.IsTestPassed(eps);
+                            test.IsPassed = test.Test.IsTestPassed(Eps);
                         }
                     }
                 }, _ =>
@@ -175,45 +232,37 @@ namespace STPO_dynamic_test
             get
             {
                 return _makeTestsCommand ??= new RelayCommand(o =>
-                                                              {
-                                                                  var testsCount = 2.0;
+                      {
+                          if (CountOfCases<1)
+                          {
+                              MessageBox.Error("Некорректное количество тест кейсов...","Ошибка");
 
-                                                                  try
-                                                                  {
-                                                                      testsCount = CountOfCases.ToDouble();
-                                                                  }
-                                                                  catch
-                                                                  {
-                                                                      MessageBox.Show("Некорректное количество тест кейсов...");
+                              return;
+                          }
 
-                                                                      return;
-                                                                  }
+                          var testsCount = CountOfCases;
+                          GeneratedTests = new ObservableCollection<TestInDataGrid>();
 
-                                                                  GeneratedTests = new ObservableCollection<TestInDataGrid>();
+                          if (!Parameters.Coefs.IsVariable &&
+                              !Parameters.Left.IsVariable &&
+                              !Parameters.Right.IsVariable &&
+                              Parameters.SelectedMethods.Count == 1 &&
+                              !Parameters.Step.IsVariable)
+                          {
+                              testsCount = 1;
+                          }
 
-                                                                  if (!Parameters.Coefs.IsVariable &&
-                                                                      !Parameters.Left.IsVariable &&
-                                                                      !Parameters.Right.IsVariable &&
-                                                                      Parameters.SelectedMethods.Count == 1 &&
-                                                                      !Parameters.Step.IsVariable)
-                                                                  {
-                                                                      testsCount = 1;
-                                                                  }
+                          GeneratedTests = new ObservableCollection<TestInDataGrid>(BuildTests(testsCount).Select(x => new TestInDataGrid(x)));
+                      },
+                      _ =>
+                      {
+                          if (Parameters.SelectedMethods.Count < 1)
+                          {
+                              return false;
+                          }
 
-                                                                  for (var i = 0; i < testsCount; i++)
-                                                                  {
-                                                                      GeneratedTests.Add(new TestInDataGrid(buildTest($"Test {i}")));
-                                                                  }
-                                                              },
-                                                              _ =>
-                                                              {
-                                                                  if (Parameters.SelectedMethods.Count < 1)
-                                                                  {
-                                                                      return false;
-                                                                  }
-
-                                                                  return true;
-                                                              });
+                          return true;
+                      });
             }
         }
 

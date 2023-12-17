@@ -21,7 +21,7 @@ namespace STPO_dynamic_test.ParametersVM
                 return Value;
             }
 
-            return RandomDouble.GetRandomDouble(Min, Max).ToString().Replace('.', ',');
+            return DoubleStringService.DoubleToString(RandomDouble.GetRandomDouble(Min, Max),",");
         }
     }
 }

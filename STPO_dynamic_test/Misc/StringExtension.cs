@@ -5,9 +5,10 @@ namespace STPO_dynamic_test.Misc
 {
     public static class StringExtension
     {
-        public static double ToDouble(this string str)
+        public static double ToDouble(this string str, string separator = null)
         {
-            return double.Parse(str, CultureInfo.GetCultureInfo("de-DE").NumberFormat);
+            DoubleStringService.StringToDouble(str, out var value, separator);
+            return value;
         }
     }
 }

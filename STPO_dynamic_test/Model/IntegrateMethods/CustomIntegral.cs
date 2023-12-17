@@ -11,10 +11,10 @@ namespace STPO_dynamic_test.Model.IntegrateMethods
     {
         public double Integrate(InitialTestData test, Func<double, List<double>, double> func)
         {
-            var min = test.Min.ToDouble();
-            var max = test.Max.ToDouble();
-            var step = test.Step.ToDouble();
-            var coefs = test.Coefs.Select(c => c.ToDouble()).ToList();
+            var min = test.Min.ToDouble(",");
+            var max = test.Max.ToDouble(",");
+            var step = test.Step.ToDouble(",");
+            var coefs = test.Coefs.Select(c => c.ToDouble(",")).ToList();
 
             double result = 0;
 

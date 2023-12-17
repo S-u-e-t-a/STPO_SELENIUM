@@ -1,4 +1,8 @@
-﻿namespace STPO_dynamic_test.Model
+﻿using System.Globalization;
+using System.Windows;
+using STPO_dynamic_test.Misc;
+
+namespace STPO_dynamic_test.Model
 {
     public class Result
     {
@@ -15,7 +19,7 @@
                 s = s.Remove(0, 4);
             }
 
-            IsNumber = double.TryParse(s, out doubleValue);
+            IsNumber = DoubleStringService.StringToDouble(s, out doubleValue);
         }
 
         public string Value { get; set; }
