@@ -5,13 +5,15 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
 using PropertyChanged;
 
 using STPO_dynamic_test.Misc;
-using STPO_dynamic_test.Model.IntegrateMethods;
 using MessageBox = HandyControl.Controls.MessageBox;
 
 
@@ -20,102 +22,34 @@ namespace STPO_dynamic_test.Model
     [AddINotifyPropertyChangedInterface]
     public class Test
     {
-        private readonly Func<double, List<double>, double> func = (x, coefs) =>
-        {
-            double FS = 0;
-
-            for (var i = 0; i < coefs.Count; i++)
-            {
-                FS += coefs[i] * Math.Pow(x, i);
-            }
-
-            return FS;
-        };
-
         public Test(InitialTestData initialTestData, string name)
         {
             InitialTestData = initialTestData;
             Name = name;
-            var numOfArgs = initialTestData.ToString().Split(' ').Length;
 
-            if (numOfArgs < 5)
+            if (!isNumeric(InitialTestData.InputNumber))
             {
-                Ye = new Result("Число параметров не соответствует ожидаемому и должно быть, как минимум 5!");
+                ResultExpected = new AggregatedResult("Вы не ввели число!");
             }
 
-            if (!isNumeric(InitialTestData.Min))
+            if (ResultExpected is null)
             {
-                Ye = new Result("Левая граница диапазона не является числом!");
+                ResultExpected = new AggregatedResult(InitialTestData.InputNumber);
             }
-
-            if (!isNumeric(InitialTestData.Max))
-            {
-                Ye = new Result("Правая граница диапазона не является числом!");
-            }
-
-            if (isNumeric(initialTestData.Min) && isNumeric(initialTestData.Max))
-            {
-                if (initialTestData.Min.ToDouble(",") >= initialTestData.Max.ToDouble(","))
-                {
-                    Ye = new Result("Левая граница диапазона должна быть < правой границы диапазона!");
-                }
-            }
-
-            if (isNumeric(InitialTestData.Step))
-            {
-                if (InitialTestData.Step.ToDouble(",") < 0.000001 || InitialTestData.Step.ToDouble(",") > 0.5)
-                {
-                    Ye = new Result("Шаг интегрирования должен быть в пределах [0.000001;0.5]");
-                }
-            }
-            else
-            {
-                Ye = new Result("Шаг интегрирования должен быть в пределах [0.000001;0.5]");
-            }
-
-            if (isNumeric(InitialTestData.IntegrateMethod))
-            {
-                if (InitialTestData.IntegrateMethod.ToDouble() < 1 || InitialTestData.IntegrateMethod.ToDouble() > 3)
-                {
-                    Ye = new Result("Четвертый параметр определяет метод интегрирования и должен быть в пределах[1; 3]");
-                }
-            }
-            else
-            {
-                Ye = new Result("Четвертый параметр определяет метод интегрирования и должен быть в пределах[1; 3]");
-            }
-
-            IntegrateMethod = new CustomIntegral();
-
-            if (Ye is null)
-            {
-                Ye = new Result($"S = {DoubleStringService.DoubleToString(IntegrateMethod.Integrate(InitialTestData, func))}");
-            }
-
-            // var res = GetResultFromScript();
-            //
-            // if (res is null)
-            // {
-            //     res = "null";
-            // }
-            // Yf = new Result(res);
         }
 
         public InitialTestData InitialTestData { get; set; }
         public string Name { get; set; }
 
         [JsonIgnore]
-        public Result Ye { get; set; }
+        public AggregatedResult ResultExpected { get; set; }
 
         [JsonIgnore]
-        public Result Yf { get; set; }
-
-        [JsonIgnore]
-        public IIntegral IntegrateMethod { get; set; }
+        public AggregatedResult ResultFact { get; set; }
 
         private bool isNumeric(string str)
         {
-            var symb = "0123456789,-";
+            var symb = "0123456789.,-";
             var flag = false;
 
             for (var i = 0; i < str.Length; i++)
@@ -139,77 +73,41 @@ namespace STPO_dynamic_test.Model
             return true;
         }
 
-        public bool IsTestPassed(double EPS)
+        public bool IsTestPassed()
         {
-            if (Yf.IsNumber && Ye.IsNumber)
-            {
-                if (Math.Abs(Yf - Ye) < EPS)
-                {
-                    return true;
-                }
-
-                return false;
-            }
-
-            if (!Yf.IsNumber && !Ye.IsNumber)
-            {
-                return Yf == Ye;
-            }
-
-            return false;
+            return ResultFact == ResultExpected;
         }
 
 
-        private string GetResultFromScript()
+        public static ChromeDriver _driver;
+        private (string,string,string) GetResultFromSelenium()
         {
-            var fileName = "Integral3x.exe";
-            if (!File.Exists(fileName))
+            if (_driver is null)
             {
-                MessageBox.Error($"Файл {fileName} не найден!", "Ошибка");
-                return null;
+                _driver = new ChromeDriver();
             }
-            try
-            {
-                var startInfo = new ProcessStartInfo
-                {
-                    FileName = fileName,
-                    Arguments = InitialTestData.ToString(),
-                    UseShellExecute = false,
-                    CreateNoWindow = true,
-                    RedirectStandardInput = true,
-                    RedirectStandardOutput = true,
-                };
+            _driver.Navigate().GoToUrl("https://worldlab.technolog.edu.ru/stud/group8/5/index.html?");
+            IWebElement inputBox = _driver.FindElement(By.Id("dec_input"));
+            inputBox.SendKeys(InitialTestData.ToString());
 
+            var button = _driver.FindElement(By.Id("send_button"));
+            button.Click();
+            Thread.Sleep(200);
+            var binVal = _driver.FindElement(By.Id("bin_div")).Text;
+            var octVal = _driver.FindElement(By.Id("oct_div")).Text;
+            var hexVal = _driver.FindElement(By.Id("hex_div")).Text;
 
-                var proc = new Process();
-                proc.StartInfo = startInfo;
-                proc.Start();
-
-                var buffer = string.Empty;
-                char symb;
-                symb = (char) proc.StandardOutput.Peek();
-                buffer = proc.StandardOutput.ReadLine();
-                proc.StandardInput.Write(Key.Enter);
-                proc.WaitForExit();
-
-                return buffer;
-            }
-            catch (Exception e)
-            {
-                return "Ошибка!";
-            }
+            binVal = binVal.Replace("Двоичная система ", "");
+            octVal = octVal.Replace("Восьмеричная система ", "");
+            hexVal = hexVal.Replace("Шестнадцатеричная система ", "");
+            return (binVal, octVal, hexVal);
         }
 
         public void Run()
         {
-            var res = GetResultFromScript();
-
-            if (res is null)
-            {
-                res = "null";
-            }
-
-            Yf = new Result(res);
+            var res = GetResultFromSelenium();
+            
+            ResultFact = new AggregatedResult(res.Item1, res.Item2, res.Item3);
         }
 
         // public override string ToString()

@@ -9,8 +9,8 @@ namespace STPO_dynamic_test.ParametersVM
     public class VariableParameter
     {
         public bool IsVariable { get; set; }
-        public double Min { get; set; }
-        public double Max { get; set; }
+        public int Min { get; set; }
+        public int Max { get; set; }
         public string Value { get; set; }
 
         // todo rename
@@ -21,7 +21,7 @@ namespace STPO_dynamic_test.ParametersVM
                 return Value;
             }
 
-            return DoubleStringService.DoubleToString(RandomDouble.GetRandomDouble(Min, Max),",");
+            return IntStringService.IntToString(RandomInt.GetRandomInt(Min, Max));
         }
     }
 }

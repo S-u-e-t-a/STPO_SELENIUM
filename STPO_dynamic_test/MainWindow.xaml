@@ -37,20 +37,7 @@
                         <Border.Effect>
                             <DropShadowEffect ShadowDepth="0" Opacity="0.3" />
                         </Border.Effect>
-                        <GroupBox Header="Настройки генератора тест кейсов" Style="{StaticResource GroupBoxOriginal}">
-                            <StackPanel>
-                                <hc:NumericUpDown hc:InfoElement.Title="Количество тест-кейсов"
-                                                  hc:InfoElement.TitlePlacement="Left" Margin="10 5"
-                                                  hc:InfoElement.TitleWidth="200"
-                                                  Value="{Binding CountOfCases,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged }"
-                                                  HorizontalAlignment="Stretch" />
-                                <hc:NumericUpDown hc:InfoElement.Title="Допустимая погрешность"
-                                                  hc:InfoElement.TitlePlacement="Left" Margin="10 5"
-                                                  hc:InfoElement.TitleWidth="200"
-                                                  Value="{Binding Eps,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged }"
-                                                  HorizontalAlignment="Stretch" />
-                            </StackPanel>
-                        </GroupBox>
+
 
                     </Border>
                     <Border CornerRadius="7" Background="White" Margin="5,10,0,0">
@@ -76,22 +63,22 @@
                                 <Label Grid.Column="1" Content="Переменная" />
 
 
-                                <CheckBox Grid.Row="1" IsChecked="{Binding Parameters.Left.IsVariable}"
+                                <CheckBox Grid.Row="1" IsChecked="{Binding Parameters.InputNumber.IsVariable}"
                                           HorizontalAlignment="Center" />
                                 <hc:TextBox Grid.Column="1" Grid.Row="1"
-                                            Visibility="{c:Binding Path=!Parameters.Left.IsVariable}"
-                                            hc:InfoElement.Title="Левая граница диапазона"
+                                            Visibility="{c:Binding Path=!Parameters.InputNumber.IsVariable}"
+                                            hc:InfoElement.Title="Число"
                                             hc:InfoElement.TitlePlacement="Left" Margin="10 5"
                                             hc:InfoElement.TitleWidth="200"
-                                            Text="{Binding Parameters.Left.Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                            Text="{Binding Parameters.InputNumber.Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                             HorizontalAlignment="Stretch" />
                                 <Border Grid.Row="1" Grid.Column="1"
-                                        Visibility="{c:Binding Path=Parameters.Left.IsVariable}"
+                                        Visibility="{c:Binding Path=Parameters.InputNumber.IsVariable}"
                                         CornerRadius="7" Background="White" Margin="5,10,10,0">
                                     <Border.Effect>
                                         <DropShadowEffect ShadowDepth="0" Opacity="0.3" />
                                     </Border.Effect>
-                                    <GroupBox Header="Левая граница диапазона"
+                                    <GroupBox Header="Число"
                                               Style="{StaticResource GroupBoxOriginal}">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -103,171 +90,19 @@
                                                               hc:InfoElement.Title="От"
                                                               hc:InfoElement.TitlePlacement="Left" Margin="10 5"
                                                               hc:InfoElement.TitleWidth="40"
-                                                              Value="{Binding  Parameters.Left.Min, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                              Value="{Binding  Parameters.InputNumber.Min, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                               HorizontalAlignment="Stretch" />
                                             <hc:NumericUpDown Grid.Column="1"
                                                               Style="{StaticResource NumericUpDownExtend}"
                                                               hc:InfoElement.Title="До"
                                                               hc:InfoElement.TitlePlacement="Left" Margin="10 5"
                                                               hc:InfoElement.TitleWidth="40"
-                                                              Value="{Binding  Parameters.Left.Max, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                              Value="{Binding  Parameters.InputNumber.Max, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                                               HorizontalAlignment="Stretch" />
                                         </Grid>
                                     </GroupBox>
                                 </Border>
-
-
-                                <CheckBox Grid.Row="2" Grid.Column="0"
-                                          IsChecked="{Binding  Parameters.Right.IsVariable}"
-                                          HorizontalAlignment="Center" />
-                                <hc:TextBox Grid.Column="1" Grid.Row="2"
-                                            Visibility="{c:Binding Path=!Parameters.Right.IsVariable}"
-                                            hc:InfoElement.Title="Правая граница диапазона"
-                                            hc:InfoElement.TitlePlacement="Left" Margin="10 5"
-                                            hc:InfoElement.TitleWidth="200"
-                                            Text="{Binding Parameters.Right.Value,  Mode=TwoWay, UpdateSourceTrigger=PropertyChanged }"
-                                            HorizontalAlignment="Stretch" />
-                                <Border Grid.Row="2" Grid.Column="1"
-                                        Visibility="{c:Binding Path=Parameters.Right.IsVariable}"
-                                        CornerRadius="7" Background="White" Margin="5,10,10,0">
-                                    <Border.Effect>
-                                        <DropShadowEffect ShadowDepth="0" Opacity="0.3" />
-                                    </Border.Effect>
-                                    <GroupBox Header="Правая граница диапазона"
-                                              Style="{StaticResource GroupBoxOriginal}">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-                                            <hc:NumericUpDown Grid.Column="0"
-                                                              Style="{StaticResource NumericUpDownExtend}"
-                                                              hc:InfoElement.Title="От"
-                                                              hc:InfoElement.TitlePlacement="Left" Margin="10 5"
-                                                              hc:InfoElement.TitleWidth="40"
-                                                              Value="{Binding  Parameters.Right.Min, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                              HorizontalAlignment="Stretch" />
-                                            <hc:NumericUpDown Grid.Column="1"
-                                                              Style="{StaticResource NumericUpDownExtend}"
-
-                                                              hc:InfoElement.Title="До"
-                                                              hc:InfoElement.TitlePlacement="Left" Margin="10 5"
-                                                              hc:InfoElement.TitleWidth="40"
-                                                              Value="{Binding   Parameters.Right.Max, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                              HorizontalAlignment="Stretch" />
-                                        </Grid>
-                                    </GroupBox>
-                                </Border>
-
-
-                                <CheckBox Grid.Row="3" IsChecked="{Binding Parameters.Step.IsVariable}"
-                                          HorizontalAlignment="Center" />
-                                <hc:TextBox Grid.Column="1" Grid.Row="3"
-                                            Visibility="{c:Binding Path=!Parameters.Step.IsVariable}"
-                                            hc:InfoElement.Title="Шаг интегрирования"
-                                            hc:InfoElement.TitlePlacement="Left" Margin="10 5"
-                                            hc:InfoElement.TitleWidth="200"
-                                            Text="{Binding Parameters.Step.Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                            HorizontalAlignment="Stretch" />
-                                <Border Grid.Row="3" Grid.Column="1"
-                                        Visibility="{c:Binding Path=Parameters.Step.IsVariable}"
-                                        CornerRadius="7" Background="White" Margin="5,10,10,0">
-                                    <Border.Effect>
-                                        <DropShadowEffect ShadowDepth="0" Opacity="0.3" />
-                                    </Border.Effect>
-                                    <GroupBox Header="Шаг интегрирования"
-                                              Style="{StaticResource GroupBoxOriginal}">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-                                            <hc:NumericUpDown Grid.Column="0"
-                                                              Style="{StaticResource NumericUpDownExtend}"
-
-                                                              hc:InfoElement.Title="От"
-                                                              hc:InfoElement.TitlePlacement="Left" Margin="10 5"
-                                                              hc:InfoElement.TitleWidth="40"
-                                                              Value="{Binding  Parameters.Step.Min, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                              HorizontalAlignment="Stretch" />
-                                            <hc:NumericUpDown Grid.Column="1"
-                                                              Style="{StaticResource NumericUpDownExtend}"
-
-                                                              hc:InfoElement.Title="До"
-                                                              hc:InfoElement.TitlePlacement="Left" Margin="10 5"
-                                                              hc:InfoElement.TitleWidth="40"
-                                                              Value="{Binding  Parameters.Step.Max, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                              HorizontalAlignment="Stretch" />
-                                        </Grid>
-                                    </GroupBox>
-                                </Border>
-
-
-                                <CheckBox Grid.Row="4" IsChecked="{Binding Parameters.Coefs.IsVariable}"
-                                          HorizontalAlignment="Center" />
-                                <hc:TextBox Grid.Column="1" Grid.Row="4"
-                                            Visibility="{c:Binding Path= !Parameters.Coefs.IsVariable}"
-                                            hc:InfoElement.Title="Коэффициенты полинома"
-                                            hc:InfoElement.TitlePlacement="Left" Margin="10 5"
-                                            hc:InfoElement.TitleWidth="200"
-                                            HorizontalAlignment="Stretch">
-                                    <hc:TextBox.Text>
-                                        <Binding Path="Parameters.Coefs.Value" Mode="TwoWay"
-                                                 UpdateSourceTrigger="PropertyChanged" />
-                                    </hc:TextBox.Text>
-                                </hc:TextBox>
-                                <Border Grid.Row="4" Grid.Column="1"
-                                        Visibility="{c:Binding Path=Parameters.Coefs.IsVariable}"
-                                        CornerRadius="7" Background="White" Margin="5,10,10,0">
-                                    <Border.Effect>
-                                        <DropShadowEffect ShadowDepth="0" Opacity="0.3" />
-                                    </Border.Effect>
-                                    <GroupBox Header="Коэффициенты полинома"
-                                              Style="{StaticResource GroupBoxOriginal}">
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition />
-                                                <RowDefinition />
-                                            </Grid.RowDefinitions>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition />
-                                                <ColumnDefinition />
-                                            </Grid.ColumnDefinitions>
-                                            <hc:NumericUpDown Grid.Column="0" Grid.Row="0"
-                                                              Style="{StaticResource NumericUpDownExtend}"
-                                                              hc:InfoElement.Title="От"
-                                                              hc:InfoElement.TitlePlacement="Left" Margin="10 5"
-                                                              hc:InfoElement.TitleWidth="40"
-                                                              Value="{Binding  Parameters.Coefs.Min, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                              HorizontalAlignment="Stretch" />
-                                            <hc:NumericUpDown Grid.Column="1" Grid.Row="0"
-                                                              Style="{StaticResource NumericUpDownExtend}"
-                                                              hc:InfoElement.Title="До"
-                                                              hc:InfoElement.TitlePlacement="Left" Margin="10 5"
-                                                              hc:InfoElement.TitleWidth="40"
-                                                              Value="{Binding  Parameters.Coefs.Max, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                              HorizontalAlignment="Stretch" />
-                                            <hc:NumericUpDown Grid.ColumnSpan="2" Grid.Row="1"
-                                                              Style="{StaticResource NumericUpDownExtend}"
-                                                              hc:InfoElement.Title="Количество коэффициентов"
-                                                              hc:InfoElement.TitlePlacement="Left" Margin="10 5"
-                                                              hc:InfoElement.TitleWidth="180"
-                                                              Value="{Binding  Parameters.Coefs.Count, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                                              HorizontalAlignment="Stretch" />
-                                        </Grid>
-                                    </GroupBox>
-                                </Border>
-
-                                <hc:CheckComboBox x:Name="MetodBox" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="5"
-                                                  SelectionChanged="CheckComboBox_SelectionChanged"
-                                                  hc:InfoElement.Title="Метод интегрирования"
-                                                  hc:InfoElement.TitlePlacement="Left"
-                                                  hc:InfoElement.TitleWidth="200"
-                                                  Margin="10 5"
-                                                  HorizontalAlignment="Stretch"
-
-                                                  Style="{StaticResource CheckComboBoxPlus}"
-                                                  ItemsSource="{Binding Methods}" />
+                                
                             </Grid>
                         </GroupBox>
 
@@ -298,9 +133,7 @@
                                 Foreground="#f5f5f5" Margin="5,0,0,0" />
                         <Button Command="{Binding  ImportCommand}" Content="Импорт" Width="70" Background="#6e5494"
                                 Foreground="#f5f5f5" Margin="5,0,0,0" />
-                        <Button Command="{Binding  ExportPdfCommand}" Content="Экспорт в PDF" Width="110"
-                                Background="#6e5494"
-                                Foreground="#f5f5f5" Margin="5,0,0,0" />
+                        
                     </StackPanel>
                 </StackPanel>
             </Grid>
@@ -446,18 +279,13 @@
 
                 <DataGrid.Columns>
                     <DataGridCheckBoxColumn Binding="{Binding IsNeedToRun}" Header="Запуск" />
-                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.Min}" Header="Нач. значение"
-                                        IsReadOnly="True" />
-                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.Max}" Header="Кон. значение"
-                                        IsReadOnly="True" />
-                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.Step}" Header="Шаг" IsReadOnly="True" />
-                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.IntegrateMethod}" Header="Метод"
-                                        IsReadOnly="True" />
-                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.CoefsString}" Header="Коэффициенты"
-                                        IsReadOnly="True" />
-                    <DataGridTextColumn Binding="{Binding Test.Ye}" Header="Ожидаемое значение" IsReadOnly="True" />
-                    <DataGridTextColumn Binding="{Binding Test.Yf}" Header="Фактическое значение значение"
-                                        IsReadOnly="True" />
+                    <DataGridTextColumn Binding="{Binding Test.InitialTestData.InputNumber}" Header="Введенное число" IsReadOnly="True" />
+                    <DataGridTextColumn Binding="{Binding Test.ResultExpected.BinResult}" Header="Ожидаемое значение BIN" IsReadOnly="True" />
+                    <DataGridTextColumn Binding="{Binding Test.ResultExpected.OctResult}" Header="Ожидаемое значение OCT" IsReadOnly="True" />
+                    <DataGridTextColumn Binding="{Binding Test.ResultExpected.HexResult}" Header="Ожидаемое значение HEX" IsReadOnly="True" />
+                    <DataGridTextColumn Binding="{Binding Test.ResultFact.BinResult}" Header="Фактическое значение BIN" IsReadOnly="True" />
+                    <DataGridTextColumn Binding="{Binding Test.ResultFact.OctResult}" Header="Фактическое значение OCT" IsReadOnly="True" />
+                    <DataGridTextColumn Binding="{Binding Test.ResultFact.HexResult}" Header="Фактическое значение HEX" IsReadOnly="True" />
                     <DataGridTextColumn Binding="{Binding IsPassed}" Header="Пройден" IsReadOnly="True" />
                 </DataGrid.Columns>
             </DataGrid>

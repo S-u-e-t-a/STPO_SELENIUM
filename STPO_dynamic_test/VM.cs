@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -21,102 +22,39 @@ namespace STPO_dynamic_test
 
     {
     #region Functions
-
-    #region Constructors
-
-        public VM()
-        {
-            Methods = new List<IntegrationMethod>
-            {
-                new IntegrationMethod() {Id = "1", Name = "Метод парабол",},
-                new IntegrationMethod() {Id = "2", Name = "Метод Трапеций",},
-                new IntegrationMethod() {Id = "3", Name = "Метод Монте-Карло",},
-            };
-        }
-
-    #endregion
-
-
-        private IntegrationMethod getMethod()
-        {
-            var rnd = new Random();
-
-            return Parameters.SelectedMethods[rnd.Next(0, Parameters.SelectedMethods.Count)];
-        }
-
-
-        private List<Test> BuildTests(int count)
+    
+    private List<Test> BuildTests(int count)
         {
             var tests = new List<Test>();
             for (int i = 0; i < count; i++)
             {
-                var coefs = Parameters.Coefs.GetValue().Split(" ").ToList();
-                var method = getMethod().Id;
-                var max = Parameters.Right.Value;
-                var min = Parameters.Left.Value;
-                var integrateStep = Parameters.Step.Value;
+                var inputNumber = Parameters.InputNumber.Value;
                 if (i == 0)
                 {
-                    if (Parameters.Left.IsVariable)
+                    if (Parameters.InputNumber.IsVariable)
                     {
-                        min = DoubleStringService.DoubleToString(Parameters.Left.Min, ",");
-                    }
-
-                    if (Parameters.Right.IsVariable)
-                    {
-                        max = DoubleStringService.DoubleToString(Parameters.Right.Min, ",");
-                    }
-
-                    if (Parameters.Step.IsVariable)
-                    {
-                        integrateStep = DoubleStringService.DoubleToString(Parameters.Step.Min, ",");
+                        inputNumber = IntStringService.IntToString(Parameters.InputNumber.Min);
                     }
                 }
                 else if (i == count - 1)
                 {
-                    if (Parameters.Left.IsVariable)
+                    if (Parameters.InputNumber.IsVariable)
                     {
-                        min = DoubleStringService.DoubleToString(Parameters.Left.Max, ",");
-                    }
-
-                    if (Parameters.Right.IsVariable)
-                    {
-                        max = DoubleStringService.DoubleToString(Parameters.Right.Max, ",");
-                    }
-
-                    if (Parameters.Step.IsVariable)
-                    {
-                        integrateStep = DoubleStringService.DoubleToString(Parameters.Step.Max, ",");
+                        inputNumber = IntStringService.IntToString(Parameters.InputNumber.Max);
                     }
                 }
                 else
                 {
-                    if (Parameters.Left.IsVariable)
+                    if (Parameters.InputNumber.IsVariable)
                     {
-                        var step = (Parameters.Left.Max - Parameters.Left.Min) / (count-1);
-                        min = DoubleStringService.DoubleToString(Parameters.Left.Min + i * step, ",");
-                    }
-
-                    if (Parameters.Right.IsVariable)
-                    {
-                        var step = (Parameters.Right.Max - Parameters.Right.Min) / (count-1);
-                        max = DoubleStringService.DoubleToString(Parameters.Right.Min + i * step, ",");
-                    }
-
-                    if (Parameters.Step.IsVariable)
-                    {
-                        var step = (Parameters.Step.Max - Parameters.Step.Min) / (count-1);
-                        integrateStep = DoubleStringService.DoubleToString(Parameters.Step.Min + i * step, ",");
+                        var step = (Parameters.InputNumber.Max - Parameters.InputNumber.Min) / (count-1);
+                        inputNumber = IntStringService.IntToString(Parameters.InputNumber.Min + i * step);
                     }
                 }
 
                 var init = new InitialTestData()
                 {
-                    Coefs = coefs,
-                    IntegrateMethod = method,
-                    Max = max,
-                    Min = min,
-                    Step = integrateStep
+                    InputNumber = inputNumber
                 };
                 tests.Add(new Test(init, $"Test {i}"));
             }
@@ -129,45 +67,19 @@ namespace STPO_dynamic_test
 
     #region Properties
 
-        public int CountOfCases { get; set; } = 10;
-        public double Eps { get; set; } = 0.1;
-
 
         public TestParametersVM Parameters { get; set; } = new TestParametersVM()
         {
-            Left = new VariableParameter()
+            InputNumber = new VariableParameter()
             {
                 IsVariable = false,
-                Min = -10,
-                Max = 0,
+                Min = 0,
+                Max = 15,
                 Value = "0",
             },
-            Right = new VariableParameter()
-            {
-                IsVariable = false,
-                Min = 0,
-                Max = 10,
-                Value = "10",
-            },
-            Step = new VariableParameter()
-            {
-                IsVariable = false,
-                Min = 0,
-                Max = 1,
-                Value = "0,1",
-            },
-            Coefs = new VariableParameterArray()
-            {
-                IsVariable = false,
-                Min = 3,
-                Max = 10,
-                Value = "1 2 3",
-                Count = 3,
-            }
         };
 
         public ObservableCollection<TestInDataGrid> GeneratedTests { get; set; }
-        public List<IntegrationMethod> Methods { get; set; }
 
     #endregion
 
@@ -197,21 +109,18 @@ namespace STPO_dynamic_test
             {
                 return _startCommand ??= new RelayCommand(o =>
                 {
-                    if (Eps<0)
-                    {
-                        MessageBox.Error("Некорректная погрешность","Ошибка");
-
-                        return;
-                    }
-
                     foreach (var test in GeneratedTests)
                     {
                         if (test.IsNeedToRun)
                         {
                             test.Test.Run();
-                            test.IsPassed = test.Test.IsTestPassed(Eps);
+                            test.IsPassed = test.Test.IsTestPassed();
                         }
                     }
+                    Test._driver?.Close();
+                    Test._driver?.Quit();
+                    Test._driver?.Dispose();
+                    Test._driver = null;
                 }, _ =>
                 {
                     if (GeneratedTests is null)
@@ -232,22 +141,12 @@ namespace STPO_dynamic_test
             get
             {
                 return _makeTestsCommand ??= new RelayCommand(o =>
-                      {
-                          if (CountOfCases<1)
-                          {
-                              MessageBox.Error("Некорректное количество тест кейсов...","Ошибка");
-
-                              return;
-                          }
-
-                          var testsCount = CountOfCases;
+                    {
+                        var number = this.Parameters.InputNumber;
+                          var testsCount = number.IsVariable ? number.Max - number.Min +1  :  1;
                           GeneratedTests = new ObservableCollection<TestInDataGrid>();
 
-                          if (!Parameters.Coefs.IsVariable &&
-                              !Parameters.Left.IsVariable &&
-                              !Parameters.Right.IsVariable &&
-                              Parameters.SelectedMethods.Count == 1 &&
-                              !Parameters.Step.IsVariable)
+                          if (!Parameters.InputNumber.IsVariable)
                           {
                               testsCount = 1;
                           }
@@ -256,11 +155,6 @@ namespace STPO_dynamic_test
                       },
                       _ =>
                       {
-                          if (Parameters.SelectedMethods.Count < 1)
-                          {
-                              return false;
-                          }
-
                           return true;
                       });
             }
